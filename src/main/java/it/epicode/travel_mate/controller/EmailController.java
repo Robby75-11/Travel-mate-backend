@@ -25,7 +25,7 @@ public class EmailController {
     @Value("${gmail.mail.from}")
     private String mittente;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('AMMINISTRATORE')")
     @PostMapping("/invia")
     public ResponseEntity<String> inviaEmailUtente(@RequestParam Long utenteId,
                                                    @RequestParam String oggetto,

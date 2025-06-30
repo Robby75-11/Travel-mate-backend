@@ -32,6 +32,9 @@ public class Utente implements UserDetails {
     @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Prenotazione> prenotazioni;
 
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Viaggio> viaggiCreati; // 'viaggiOrganizzati'
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
