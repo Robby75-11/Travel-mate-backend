@@ -1,0 +1,54 @@
+package it.epicode.travel_mate.controller;
+
+import it.epicode.travel_mate.dto.PrenotazioneDto; // Importa il DTO per l'input
+import it.epicode.travel_mate.dto.PrenotazioneResponseDto; // Importa il DTO per l'output
+import it.epicode.travel_mate.enumeration.StatoPrenotazione;
+import it.epicode.travel_mate.service.PrenotazioneService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/prenotazioni")
+public class PrenotazioneController {
+
+    @Autowired
+    private PrenotazioneService prenotazioneService;
+
+    @PostMapping // Ora riceve un PrenotazioneDto e restituisce PrenotazioneResponseDto
+    @PreAuthorize("hasRole('UTENTE')")
+    public ResponseEntity<PrenotazioneResponseDto> creaPrenotazione(@RequestBody PrenotazioneDto prenotazioneDto) {
+        return ResponseEntity.ok(prenotazioneService.savePrenotazione(prenotazioneDto));
+    }
+
+    @GetMapping // Ora restituisce List di PrenotazioneResponseDto
+    @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
+    public ResponseEntity<List<PrenotazioneResponseDto>> getTuttePrenotazioni(@RequestParam(required = false) StatoPrenotazione stato) {
+        if (stato != null) {
+            return ResponseEntity.ok(prenotazioneService.findByStatoPrenotazione(stato));
+        }
+        return ResponseEntity.ok(prenotazioneService.getAllPrenotazioni());
+    }
+
+    @GetMapping("/{id}") // Ora restituisce PrenotazioneResponseDto
+    @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
+    public ResponseEntity<PrenotazioneResponseDto> getPrenotazione(@PathVariable Long id) {
+        return ResponseEntity.ok(prenotazioneService.getPrenotazioneById(id));
+    }
+
+    @PutMapping("/{id}") // Ora riceve un PrenotazioneDto e restituisce PrenotazioneResponseDto
+    @PreAuthorize("hasRole('AMMINISTRATORE')")
+    public ResponseEntity<PrenotazioneResponseDto> aggiornaPrenotazione(@PathVariable Long id, @RequestBody PrenotazioneDto prenotazioneDto) {
+        return ResponseEntity.ok(prenotazioneService.updatePrenotazione(id, prenotazioneDto));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('AMMINISTRATORE')")
+    public ResponseEntity<Void> eliminaPrenotazione(@PathVariable Long id) {
+        prenotazioneService.deletePrenotazione(id);
+        return ResponseEntity.noContent().build();
+    }
+}
