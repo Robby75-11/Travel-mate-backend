@@ -23,7 +23,7 @@ public class HotelController {
 
     // --- Endpoint per CREARE un Hotel (POST) ---
     @PostMapping
-    @PreAuthorize("hasRole('UTENTE')") // Solo l'utente può creare hotel
+    @PreAuthorize("hasRole('AMMINISTRATORE')")
     public ResponseEntity<?> creaHotel(@Valid @RequestBody Hotel hotel, BindingResult bindingResult) { // O HotelDto
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
