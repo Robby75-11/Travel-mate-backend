@@ -2,18 +2,17 @@ package it.epicode.travel_mate.dto;
 
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.LocalDate; // Per LocalDate
 
+// DTO per le risposte dei Viaggi al frontend
 @Data
-public class ViaggioDto {
-
+public class ViaggioResponseDto {
     private Long id;
-
     private String destinazione;
     private LocalDate dataPartenza;
     private LocalDate dataRitorno;
     private String descrizione;
-    private LocalDate dataInizio;
-    private LocalDate dataFine;
     private double costoViaggio;
+    private String immagineUrl;
+
 }

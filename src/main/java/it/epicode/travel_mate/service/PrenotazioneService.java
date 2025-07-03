@@ -201,7 +201,7 @@ public class PrenotazioneService {
             dto.setVoloAeroportoArrivo(prenotazione.getVolo().getAeroportoArrivo());
             dto.setVoloDataOraPartenza(prenotazione.getVolo().getDataOraPartenza());
             dto.setVoloDataOraArrivo(prenotazione.getVolo().getDataOraArrivo());
-            dto.setVoloPrezzo(prenotazione.getVolo().getPrezzo());
+            dto.setCostoVolo(prenotazione.getVolo().getCostoVolo());
         }
 
         return dto;

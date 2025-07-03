@@ -15,6 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 @Configuration
 @EnableWebSecurity
@@ -47,7 +49,7 @@ public class SecurityConfig {
                 // Endpoint per la gestione degli hotel: richiedono il ruolo AMMINISTRATORE
                 .requestMatchers(HttpMethod.POST, "/hotel").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.PUT, "/hotel/**").hasRole("AMMINISTRATORE")
-                .requestMatchers(HttpMethod.DELETE, "/hotel/**").hasRole("AMMINISTRATORE")
+                .requestMatchers(HttpMethod.DELETE, "/hotel/id").hasRole("AMMINISTRATORE")
                 // MODIFICA QUI: Specifica l'ID nel pattern per l'upload immagine hotel
                 .requestMatchers(HttpMethod.PATCH, "/hotel/{id}/immagine").hasRole("AMMINISTRATORE")
 
@@ -86,5 +88,10 @@ public class SecurityConfig {
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
+    }
+    // NUOVO BEAN: Configurazione esplicita per il MultipartResolver
+    @Bean
+    public MultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
     }
 }

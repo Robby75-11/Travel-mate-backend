@@ -1,13 +1,14 @@
 package it.epicode.travel_mate.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
 
 @Entity
-@Table(name = "Hotel")
+@Table(name = "hotel")
 @Data
 public class Hotel {
 
@@ -18,11 +19,14 @@ public class Hotel {
     private String nome;
     private String indirizzo;
     private String citta;
+
+    @Column(columnDefinition = "TEXT")
     private String descrizione;
     private double prezzoNotte;
     private String immagineUrl;
 
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Prenotazione> prenotazioni;
 
 

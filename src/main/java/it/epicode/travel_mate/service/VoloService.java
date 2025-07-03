@@ -39,7 +39,7 @@ public class VoloService {
         existing.setAeroportoArrivo(volo.getAeroportoArrivo());
         existing.setDataOraPartenza(volo.getDataOraPartenza());
         existing.setDataOraArrivo(volo.getDataOraArrivo());
-        existing.setPrezzo(volo.getPrezzo());
+        existing.setCostoVolo(volo.getCostoVolo());
         return voloRepository.save(existing);
     }
 

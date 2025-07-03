@@ -2,6 +2,7 @@ package it.epicode.travel_mate.model;
 
 import it.epicode.travel_mate.enumeration.StatoPrenotazione;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -16,6 +17,8 @@ public class Prenotazione {
     private Long id;
 
     private String destinazione;
+
+    @FutureOrPresent
     private LocalDate dataInizio;
     private LocalDate dataFine;
     @Column(nullable = false)
@@ -41,6 +44,7 @@ public class Prenotazione {
     @ManyToOne
     @JoinColumn(name = "volo_id")
     private Volo volo;
+
 
     @PrePersist
     public void prePersist() {

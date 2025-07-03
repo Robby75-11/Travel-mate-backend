@@ -33,7 +33,7 @@ public class JwtTool {
         // Aggiungiamo il ruolo dell'utente come claim "role"
         // Assicurati che 'utente.getRuolo()' restituisca il ruolo come stringa (es. "AMMINISTRATORE", "UTENTE")
         // Se utente.getRuolo() restituisce un enum, usa .toString() per ottenere la stringa del ruolo
-        claims.put("role", utente.getRuolo().toString()); // <--- MODIFICA CHIAVE QUI
+        claims.put("role", "ROLE_" + utente.getRuolo().toString()); // <--- MODIFICA CHIAVE QUI
 
         // Creiamo il token
         return Jwts.builder()
@@ -62,14 +62,5 @@ public class JwtTool {
                 .getSubject(); // Estrae il subject (che ora è l'email)
     }
 
-    //metodo per estrarre l'utente collegato al token
-    /*
-    public Utente getUtenteFromToken(String token) throws NotFoundException {
-        //recuperare l'id dell'utente dal token
-       Long id = Long.parseLong(Jwts.parser().verifyWith(Keys.hmacShaKeyFor(chiaveSegreta.getBytes())).
-                build().parseSignedClaims(token).getPayload().getSubject());
 
-        return utenteService.getUtente(id);
-    }
-*/
 }

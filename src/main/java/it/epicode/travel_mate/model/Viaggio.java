@@ -1,6 +1,7 @@
 package it.epicode.travel_mate.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -20,9 +21,14 @@ public class Viaggio {
     private LocalDate dataRitorno;
     private String descrizione;
 
+    private double costoViaggio;
+    private String immagineUrl;
+
     @ManyToOne
-    private Utente utente;
+    @JoinColumn(name = "utente_id")
+    private Utente utente; // L'utente che ha creato/organizzato il viaggio
 
     @OneToMany(mappedBy = "viaggio", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // Per evitare cicli di serializzazione JSON
     private List<Prenotazione> prenotazioni;
 }

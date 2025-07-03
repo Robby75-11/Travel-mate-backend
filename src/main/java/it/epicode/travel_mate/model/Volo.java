@@ -18,7 +18,8 @@ public class Volo {
     private String aeroportoArrivo;
     private LocalDateTime dataOraPartenza;
     private LocalDateTime dataOraArrivo;
-    private double prezzo;
+    private double costoVolo;
+    @Column(unique = true, nullable = false)
     private String numeroVolo;
 
     @OneToMany(mappedBy = "volo", cascade = CascadeType.ALL, orphanRemoval = true)

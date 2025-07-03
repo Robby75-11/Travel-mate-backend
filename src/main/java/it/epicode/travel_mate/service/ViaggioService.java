@@ -1,12 +1,20 @@
 package it.epicode.travel_mate.service;
 
+import it.epicode.travel_mate.dto.ViaggioResponseDto; // Importa il DTO di risposta
 import it.epicode.travel_mate.exception.NotFoundException;
 import it.epicode.travel_mate.model.Viaggio;
 import it.epicode.travel_mate.repository.ViaggioRepository;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ViaggioService {
@@ -14,49 +22,61 @@ public class ViaggioService {
     @Autowired
     private ViaggioRepository viaggioRepository;
 
-    // Crea un nuovo viaggio
+    @Autowired
+    private Cloudinary cloudinary; // Assicurati che Cloudinary sia configurato come Bean
+
+    // Metodo helper per convertire Viaggio (Entity) in ViaggioResponseDto
+    private ViaggioResponseDto convertToDto(Viaggio viaggio) {
+        ViaggioResponseDto dto = new ViaggioResponseDto();
+        BeanUtils.copyProperties(viaggio, dto); // Copia le proprietà corrispondenti
+        return dto;
+    }
+
     public Viaggio saveViaggio(Viaggio viaggio) {
         return viaggioRepository.save(viaggio);
     }
 
-    // Recupera tutti i viaggi
-    public List<Viaggio> getAllViaggi() {
-        return viaggioRepository.findAll();
+    public List<ViaggioResponseDto> getAllViaggi() { // Restituisce una lista di DTO
+        return viaggioRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    // Recupera un viaggio per ID
-    public Viaggio getViaggioById(Long id) {
-        return viaggioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Viaggio non trovato con id: " + id));
+    public ViaggioResponseDto getViaggioById(Long id) { // Restituisce un DTO
+        Viaggio viaggio = viaggioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Viaggio con id=" + id + " non trovato"));
+        return convertToDto(viaggio);
     }
 
-    public Viaggio getViaggio(Long id) {
-        return viaggioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Viaggio non trovato con id: " + id));
+    public ViaggioResponseDto updateViaggio(Long id, Viaggio viaggioDetails) { // Accetta l'entità Viaggio per i dettagli
+        Viaggio viaggio = viaggioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Viaggio con id=" + id + " non trovato"));
+
+        viaggio.setDestinazione(viaggioDetails.getDestinazione());
+        viaggio.setDataPartenza(viaggioDetails.getDataPartenza());
+        viaggio.setDataRitorno(viaggioDetails.getDataRitorno());
+        viaggio.setDescrizione(viaggioDetails.getDescrizione());
+        viaggio.setCostoViaggio(viaggioDetails.getCostoViaggio());
+        // L'immagineUrl viene aggiornata tramite il metodo aggiornaImmagineViaggio
+
+        return convertToDto(viaggioRepository.save(viaggio));
     }
-    // Elimina un viaggio
+
     public void deleteViaggio(Long id) {
         if (!viaggioRepository.existsById(id)) {
-            throw new NotFoundException("Viaggio non trovato con id: " + id);
+            throw new NotFoundException("Viaggio con id=" + id + " non trovato");
         }
         viaggioRepository.deleteById(id);
     }
 
-    // Aggiorna un viaggio
-    public Viaggio updateViaggio(Long id, Viaggio updatedViaggio) {
-        Viaggio existing = getViaggioById(id);
-        existing.setDestinazione(updatedViaggio.getDestinazione());
-        existing.setDataPartenza(updatedViaggio.getDataPartenza());
-        existing.setDataRitorno(updatedViaggio.getDataRitorno());
-        existing.setDescrizione(updatedViaggio.getDescrizione());
-        existing.setUtente(updatedViaggio.getUtente());
-        return viaggioRepository.save(existing);
+    public ViaggioResponseDto aggiornaImmagineViaggio(Long id, MultipartFile file) throws IOException {
+        Viaggio viaggio = viaggioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Viaggio con id=" + id + " non trovato"));
+
+        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+        String imageUrl = (String) uploadResult.get("url");
+
+        viaggio.setImmagineUrl(imageUrl);
+        return convertToDto(viaggioRepository.save(viaggio));
     }
-
-    // Filtra per destinazione (opzionale)
-//    public List<Viaggio> findByDestinazione(String destinazione) {
-//        return viaggioRepository.findByDestinazioneIgnoreCase(destinazione);
-//    }
-
 }
-

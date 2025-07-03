@@ -21,5 +21,5 @@ public class VoloDto {
 
     private String numeroVolo;
 
-    private double prezzo;
+    private double costoVolo;
 }

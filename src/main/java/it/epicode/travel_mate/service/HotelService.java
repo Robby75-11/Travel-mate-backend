@@ -1,15 +1,20 @@
 package it.epicode.travel_mate.service;
 
+import it.epicode.travel_mate.dto.HotelResponseDto; // Importa il DTO di risposta
 import it.epicode.travel_mate.exception.NotFoundException;
 import it.epicode.travel_mate.model.Hotel;
 import it.epicode.travel_mate.repository.HotelRepository;
-import jakarta.persistence.SequenceGenerator;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.springframework.beans.BeanUtils; // Utile per copiare proprietà
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors; // Per usare .stream().map().collect()
 
 @Service
 public class HotelService {
@@ -18,55 +23,68 @@ public class HotelService {
     private HotelRepository hotelRepository;
 
     @Autowired
-    private ImmagineService immagineService;
+    private Cloudinary cloudinary; // Assicurati che Cloudinary sia configurato come Bean
 
-    // Crea o aggiorna un hotel
+    // Metodo helper per convertire Hotel (Entity) in HotelResponseDto
+    private HotelResponseDto convertToDto(Hotel hotel) {
+        HotelResponseDto dto = new HotelResponseDto();
+        BeanUtils.copyProperties(hotel, dto); // Copia le proprietà corrispondenti (es. id, nome, indirizzo, ecc.)
+        return dto;
+    }
+
+    // saveHotel accetta l'entità Hotel direttamente per la creazione/persistenza
     public Hotel saveHotel(Hotel hotel) {
         return hotelRepository.save(hotel);
     }
 
-    // Recupera tutti gli hotel
-    public List<Hotel> getAllHotels() {
-        return hotelRepository.findAll();
+    // getAllHotels ora restituisce una lista di HotelResponseDto
+    public List<HotelResponseDto> getAllHotels() {
+        return hotelRepository.findAll().stream()
+                .map(this::convertToDto) // Converte ogni Hotel in HotelResponseDto
+                .collect(Collectors.toList());
     }
 
-    // Recupera un hotel per ID
-    public Hotel getHotelById(Long id) {
-        return hotelRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Hotel non trovato con id: " + id));
+    // getHotelById ora restituisce un singolo HotelResponseDto
+    public HotelResponseDto getHotelById(Long id) {
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Hotel con id=" + id + " non trovato"));
+        return convertToDto(hotel); // Converte l'Hotel trovato in HotelResponseDto
     }
 
-    // Elimina un hotel per ID
+    // updateHotel accetta l'entità Hotel per i dettagli di aggiornamento
+    // e restituisce l'HotelResponseDto dell'hotel aggiornato
+    public HotelResponseDto updateHotel(Long id, Hotel hotelDetails) {
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Hotel con id=" + id + " non trovato"));
+
+        // Aggiorna solo i campi che possono essere modificati tramite PUT/DTO
+        hotel.setNome(hotelDetails.getNome());
+        hotel.setIndirizzo(hotelDetails.getIndirizzo()); // Reintrodotto
+        hotel.setCitta(hotelDetails.getCitta());
+        hotel.setDescrizione(hotelDetails.getDescrizione());
+        hotel.setPrezzoNotte(hotelDetails.getPrezzoNotte());
+
+        return convertToDto(hotelRepository.save(hotel)); // Salva e restituisce il DTO aggiornato
+    }
+
     public void deleteHotel(Long id) {
         if (!hotelRepository.existsById(id)) {
-            throw new NotFoundException("Hotel non trovato con id: " + id);
+            throw new NotFoundException("Hotel con id=" + id + " non trovato");
         }
         hotelRepository.deleteById(id);
     }
 
-    // Aggiorna un hotel
-    public Hotel updateHotel(Long id, Hotel updatedHotel) {
-        Hotel existing = getHotelById(id);
-        existing.setNome(updatedHotel.getNome());
-        existing.setIndirizzo(updatedHotel.getIndirizzo());
-        existing.setCitta(updatedHotel.getCitta());
-        existing.setDescrizione(updatedHotel.getDescrizione());
-        existing.setPrezzoNotte(updatedHotel.getPrezzoNotte());
-        existing.setImmagineUrl(updatedHotel.getImmagineUrl());
-        return hotelRepository.save(existing);
-    }
-    public Hotel aggiornaImmagineHotel(Long hotelId, MultipartFile file) throws IOException {
-        // 1. Recupera l'hotel esistente
-        Hotel hotel = getHotelById(hotelId);
+    // aggiornaImmagineHotel ora restituisce l'HotelResponseDto dell'hotel aggiornato
+    public HotelResponseDto aggiornaImmagineHotel(Long id, MultipartFile file) throws IOException {
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Hotel con id=" + id + " non trovato"));
 
-        // 2. Carica l'immagine usando il servizio dedicato e ottieni l'URL
-        String imageUrl = immagineService.caricaImmagine(file);
+        // Carica l'immagine su Cloudinary
+        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+        String imageUrl = (String) uploadResult.get("url");
 
-        // 3. Aggiorna il campo immagineUrl dell'hotel
+        // Aggiorna l'URL dell'immagine nell'hotel
         hotel.setImmagineUrl(imageUrl);
-
-        // 4. Salva l'hotel aggiornato nel database
-        return hotelRepository.save(hotel);
+        return convertToDto(hotelRepository.save(hotel)); // Salva e restituisce il DTO aggiornato
     }
-
 }

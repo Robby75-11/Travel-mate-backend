@@ -41,5 +41,5 @@ public class PrenotazioneResponseDto {
     private String voloAeroportoArrivo;
     private LocalDateTime voloDataOraPartenza;
     private LocalDateTime voloDataOraArrivo;
-    private double voloPrezzo;
+    private double costoVolo;
 }
