@@ -1,0 +1,16 @@
+package it.epicode.travel_mate.dto;
+
+import lombok.Data;
+
+import java.time.LocalDate;
+
+@Data
+public class RecensioneDto {
+    private Long id;
+    private String contenuto;
+    private int valutazione;
+    private LocalDate dataCreazione;
+
+    private Long utenteId;
+    private  String utenteNome;
+}

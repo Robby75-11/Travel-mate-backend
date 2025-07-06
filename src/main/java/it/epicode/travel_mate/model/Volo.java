@@ -1,4 +1,5 @@
 package it.epicode.travel_mate.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class Volo {
     private String numeroVolo;
 
     @OneToMany(mappedBy = "volo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Prenotazione> prenotazioni;
 
 

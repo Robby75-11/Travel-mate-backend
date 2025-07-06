@@ -1,5 +1,6 @@
 package it.epicode.travel_mate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.epicode.travel_mate.enumeration.StatoPrenotazione;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -31,6 +32,7 @@ public class Prenotazione {
 
     @ManyToOne
     @JoinColumn(name = "utente_id")
+    @JsonIgnore
     private  Utente utente;
 
     @ManyToOne

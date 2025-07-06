@@ -59,6 +59,11 @@ public class PrenotazioneService {
                 .collect(Collectors.toList());
     }
 
+
+    public boolean esistePrenotazionePerUtenteEViaggio(Long utenteId, Long viaggioId) {
+        return prenotazioneRepository.existsByUtente_IdAndViaggio_Id(utenteId, viaggioId);
+    }
+
     public List<PrenotazioneResponseDto> getPrenotazioniByUtenteId(Long utenteId) {
         return prenotazioneRepository.findByUtenteId(utenteId).stream()
                 .map(this::convertToResponseDto)

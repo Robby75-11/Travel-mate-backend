@@ -47,8 +47,7 @@ public class JwtFilter extends OncePerRequestFilter {
             //estraggo il token
             String token = authorization.substring(7);
 
-            //verifico che il token sia valido
-            jwtTool.validateToken(token);
+
 
             try {
                 //recupero l'utente collegato al token usando il metodo getUserFromToken del jwtTool

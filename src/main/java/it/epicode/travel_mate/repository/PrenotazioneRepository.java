@@ -12,7 +12,7 @@ public interface PrenotazioneRepository extends JpaRepository<Prenotazione, Long
 
     List<Prenotazione> findByViaggioId(Long viaggioId);
 
-    boolean existsByUtenteIdAndViaggioId(Long utenteId, Long viaggioId);
+    boolean existsByUtente_IdAndViaggio_Id(Long utenteId, Long viaggioId);
 
     List<Prenotazione> findByStatoPrenotazione(StatoPrenotazione statoPrenotazione);
 

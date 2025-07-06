@@ -44,13 +44,13 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll() // Login e registrazione aperti a tutti
 
                 // Endpoint pubblici per GET (voli, viaggi, hotel)
-                .requestMatchers(HttpMethod.GET, "/voli/**", "/viaggi/**", "/hotel", "/hotel/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/voli/**", "/viaggi/**", "/hotel", "/utenti", "/hotel/**").permitAll()
 
                 // Endpoint per la gestione degli hotel: richiedono il ruolo AMMINISTRATORE
-                .requestMatchers(HttpMethod.POST, "/hotel").hasRole("AMMINISTRATORE")
+               .requestMatchers(HttpMethod.POST, "/hotel").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.PUT, "/hotel/**").hasRole("AMMINISTRATORE")
-                .requestMatchers(HttpMethod.DELETE, "/hotel/id").hasRole("AMMINISTRATORE")
-                // MODIFICA QUI: Specifica l'ID nel pattern per l'upload immagine hotel
+                .requestMatchers(HttpMethod.DELETE, "/hotel/{id}").hasRole("AMMINISTRATORE")
+
                 .requestMatchers(HttpMethod.PATCH, "/hotel/{id}/immagine").hasRole("AMMINISTRATORE")
 
                 // Endpoint per la gestione dei viaggi: richiedono il ruolo AMMINISTRATORE
@@ -63,9 +63,11 @@ public class SecurityConfig {
                 // Endpoint per la gestione degli utenti: richiedono il ruolo AMMINISTRATORE
                 .requestMatchers("/utenti/**").hasRole("AMMINISTRATORE")
 
-                // Endpoint per le prenotazioni (richiedono autenticazione, non necessariamente admin)
-                .requestMatchers("/prenotazioni/**").authenticated()
+                        // Endpoint POST per prenotare: accessibile anche agli utenti
+                        .requestMatchers(HttpMethod.POST, "/prenotazioni/**").hasAnyRole("UTENTE", "AMMINISTRATORE")
 
+// Tutti gli altri metodi sulle prenotazioni richiedono solo autenticazione (es. GET per vedere le proprie prenotazioni)
+                        .requestMatchers("/prenotazioni/**").authenticated()
 
                 .requestMatchers(HttpMethod.POST, "/email/invia").hasRole("AMMINISTRATORE") // Solo ADMIN può inviare email
                 .requestMatchers("/amministratore/**").hasRole("AMMINISTRATORE")  // solo admin

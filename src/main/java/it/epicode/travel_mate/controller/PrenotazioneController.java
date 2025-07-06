@@ -19,7 +19,7 @@ public class PrenotazioneController {
     private PrenotazioneService prenotazioneService;
 
     @PostMapping // Ora riceve un PrenotazioneDto e restituisce PrenotazioneResponseDto
-    @PreAuthorize("hasRole('UTENTE')")
+    @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
     public ResponseEntity<PrenotazioneResponseDto> creaPrenotazione(@RequestBody PrenotazioneDto prenotazioneDto) {
         return ResponseEntity.ok(prenotazioneService.savePrenotazione(prenotazioneDto));
     }
@@ -37,6 +37,27 @@ public class PrenotazioneController {
     @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
     public ResponseEntity<PrenotazioneResponseDto> getPrenotazione(@PathVariable Long id) {
         return ResponseEntity.ok(prenotazioneService.getPrenotazioneById(id));
+    }
+
+    @GetMapping("/esiste")
+    @PreAuthorize("hasRole('UTENTE')")
+    public ResponseEntity<Boolean> checkPrenotazione(@RequestParam Long utenteId, @RequestParam Long viaggioId) {
+        boolean esiste = prenotazioneService.esistePrenotazionePerUtenteEViaggio(utenteId, viaggioId);
+        return ResponseEntity.ok(esiste);
+    }
+
+    @GetMapping("/utente/{utenteId}")
+    @PreAuthorize("hasRole('UTENTE')")
+    public ResponseEntity<List<PrenotazioneResponseDto>> getPrenotazioniUtente(@PathVariable Long utenteId) {
+        List<PrenotazioneResponseDto> prenotazioni = prenotazioneService.getPrenotazioniByUtenteId(utenteId);
+        return ResponseEntity.ok(prenotazioni);
+    }
+
+    @GetMapping("/viaggio/{viaggioId}")
+    @PreAuthorize("hasRole('UTENTE')")
+    public ResponseEntity<List<PrenotazioneResponseDto>> getPrenotazioniViaggio(@PathVariable Long viaggioId) {
+        List<PrenotazioneResponseDto> prenotazioni = prenotazioneService.getPrenotazioniByViaggioId(viaggioId);
+        return ResponseEntity.ok(prenotazioni);
     }
 
     @PutMapping("/{id}") // Ora riceve un PrenotazioneDto e restituisce PrenotazioneResponseDto

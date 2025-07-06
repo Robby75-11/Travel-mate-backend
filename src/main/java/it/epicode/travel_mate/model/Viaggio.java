@@ -20,7 +20,6 @@ public class Viaggio {
     private LocalDate dataPartenza;
     private LocalDate dataRitorno;
     private String descrizione;
-
     private double costoViaggio;
     private String immagineUrl;
 

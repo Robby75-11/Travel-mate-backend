@@ -57,7 +57,7 @@ public class ViaggioService {
         viaggio.setDataRitorno(viaggioDetails.getDataRitorno());
         viaggio.setDescrizione(viaggioDetails.getDescrizione());
         viaggio.setCostoViaggio(viaggioDetails.getCostoViaggio());
-        // L'immagineUrl viene aggiornata tramite il metodo aggiornaImmagineViaggio
+
 
         return convertToDto(viaggioRepository.save(viaggio));
     }

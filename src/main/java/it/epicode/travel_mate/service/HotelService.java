@@ -34,8 +34,15 @@ public class HotelService {
 
     // saveHotel accetta l'entità Hotel direttamente per la creazione/persistenza
     public Hotel saveHotel(Hotel hotel) {
+        if (existsByNome(hotel.getNome())) {
+            throw new IllegalArgumentException("Esiste già un hotel con il nome: " + hotel.getNome());
+        }
         return hotelRepository.save(hotel);
     }
+    public boolean existsByNome(String nome) {
+        return hotelRepository.existsByNome(nome);
+    }
+
 
     // getAllHotels ora restituisce una lista di HotelResponseDto
     public List<HotelResponseDto> getAllHotels() {
@@ -81,7 +88,7 @@ public class HotelService {
 
         // Carica l'immagine su Cloudinary
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-        String imageUrl = (String) uploadResult.get("url");
+        String imageUrl = (String) uploadResult.get("secure_url");
 
         // Aggiorna l'URL dell'immagine nell'hotel
         hotel.setImmagineUrl(imageUrl);

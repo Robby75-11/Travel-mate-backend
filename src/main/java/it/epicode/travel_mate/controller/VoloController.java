@@ -21,7 +21,7 @@ public class VoloController {
     private VoloService voloService;
 
     @PostMapping
-    @PreAuthorize("hasRole('UTENTE')")
+    @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
     public ResponseEntity<?> creaVolo(@Valid @RequestBody Volo volo, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());

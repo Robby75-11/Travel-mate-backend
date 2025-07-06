@@ -11,14 +11,11 @@ public class PrenotazioneDto {
     private Long id;
 
     private LocalDate dataPrenotazione;
-
     private StatoPrenotazione statoPrenotazione;
-
     private String destinazione;
     private LocalDate dataInizio;
     private LocalDate dataFine;
     private double prezzo;
-
 
     private Long utenteId;
 
