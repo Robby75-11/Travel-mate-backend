@@ -30,4 +30,8 @@ public class Viaggio {
     @OneToMany(mappedBy = "viaggio", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore // Per evitare cicli di serializzazione JSON
     private List<Prenotazione> prenotazioni;
+
+    @OneToMany(mappedBy = "viaggio", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Recensione> recensioni;
 }

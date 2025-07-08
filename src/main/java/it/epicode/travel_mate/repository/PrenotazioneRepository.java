@@ -18,4 +18,5 @@ public interface PrenotazioneRepository extends JpaRepository<Prenotazione, Long
 
     boolean existsByUtenteIdAndStatoPrenotazione(Long utenteId, StatoPrenotazione statoPrenotazione);
 
+
 }

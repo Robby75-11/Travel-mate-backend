@@ -29,5 +29,9 @@ public class Hotel {
     @JsonIgnore
     private List<Prenotazione> prenotazioni;
 
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Recensione> recensioni;
+
 
 }

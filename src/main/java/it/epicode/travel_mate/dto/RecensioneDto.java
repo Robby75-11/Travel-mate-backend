@@ -13,4 +13,7 @@ public class RecensioneDto {
 
     private Long utenteId;
     private  String utenteNome;
+    private String utenteCognome;
+
+
 }

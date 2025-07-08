@@ -3,10 +3,12 @@ package it.epicode.travel_mate.controller;
 import it.epicode.travel_mate.dto.PrenotazioneDto; // Importa il DTO per l'input
 import it.epicode.travel_mate.dto.PrenotazioneResponseDto; // Importa il DTO per l'output
 import it.epicode.travel_mate.enumeration.StatoPrenotazione;
+import it.epicode.travel_mate.model.Utente;
 import it.epicode.travel_mate.service.PrenotazioneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +22,11 @@ public class PrenotazioneController {
 
     @PostMapping // Ora riceve un PrenotazioneDto e restituisce PrenotazioneResponseDto
     @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
-    public ResponseEntity<PrenotazioneResponseDto> creaPrenotazione(@RequestBody PrenotazioneDto prenotazioneDto) {
-        return ResponseEntity.ok(prenotazioneService.savePrenotazione(prenotazioneDto));
+    public ResponseEntity<PrenotazioneResponseDto> creaPrenotazione(@RequestBody PrenotazioneDto prenotazioneDto,
+
+        @AuthenticationPrincipal Utente utente
+    ) {
+        return ResponseEntity.ok(prenotazioneService.savePrenotazione(prenotazioneDto, utente));
     }
 
     @GetMapping // Ora restituisce List di PrenotazioneResponseDto
@@ -62,8 +67,12 @@ public class PrenotazioneController {
 
     @PutMapping("/{id}") // Ora riceve un PrenotazioneDto e restituisce PrenotazioneResponseDto
     @PreAuthorize("hasRole('AMMINISTRATORE')")
-    public ResponseEntity<PrenotazioneResponseDto> aggiornaPrenotazione(@PathVariable Long id, @RequestBody PrenotazioneDto prenotazioneDto) {
-        return ResponseEntity.ok(prenotazioneService.updatePrenotazione(id, prenotazioneDto));
+    public ResponseEntity<PrenotazioneResponseDto> aggiornaPrenotazione(
+            @PathVariable Long id,
+            @RequestBody PrenotazioneDto prenotazioneDto,
+            @AuthenticationPrincipal Utente utente // 👉 aggiungi questo parametro
+    ) {
+        return ResponseEntity.ok(prenotazioneService.updatePrenotazione(id, prenotazioneDto, utente));
     }
 
     @DeleteMapping("/{id}")

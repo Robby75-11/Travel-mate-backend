@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.time.LocalDateTime; // Assicurati di importarlo
 
@@ -46,6 +47,11 @@ public class PrenotazioneService {
                 .map(this::convertToResponseDto)
                 .collect(Collectors.toList());
     }
+
+    public Optional<Prenotazione> getPrenotazioneByIdOptional(Long id) {
+        return prenotazioneRepository.findById(id);
+    }
+
 
     public PrenotazioneResponseDto getPrenotazioneById(Long id) {
         Prenotazione prenotazione = prenotazioneRepository.findById(id)
@@ -76,12 +82,10 @@ public class PrenotazioneService {
                 .collect(Collectors.toList());
     }
 
-    public PrenotazioneResponseDto savePrenotazione(PrenotazioneDto prenotazioneDto) {
+    public PrenotazioneResponseDto savePrenotazione(PrenotazioneDto prenotazioneDto, Utente utente) {
         Prenotazione prenotazione = new Prenotazione();
-        Utente utente = utenteRepository.findById(prenotazioneDto.getUtenteId())
-                .orElseThrow(() -> new NotFoundException("Utente con ID " + prenotazioneDto.getUtenteId() + " non trovato."));
-        prenotazione.setUtente(utente);
 
+        prenotazione.setUtente(utente);
         prenotazione.setDataPrenotazione(prenotazioneDto.getDataPrenotazione());
         prenotazione.setStatoPrenotazione(prenotazioneDto.getStatoPrenotazione());
         prenotazione.setDestinazione(prenotazioneDto.getDestinazione());
@@ -109,15 +113,12 @@ public class PrenotazioneService {
         return convertToResponseDto(savedPrenotazione);
     }
 
-    public PrenotazioneResponseDto updatePrenotazione(Long id, PrenotazioneDto prenotazioneDto) {
+    public PrenotazioneResponseDto updatePrenotazione(Long id, PrenotazioneDto prenotazioneDto, Utente utente) {
         Prenotazione existing = prenotazioneRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Prenotazione non trovata con id: " + id));
 
-        if (prenotazioneDto.getUtenteId() != null && (existing.getUtente() == null || !existing.getUtente().getId().equals(prenotazioneDto.getUtenteId()))) {
-            Utente utente = utenteRepository.findById(prenotazioneDto.getUtenteId())
-                    .orElseThrow(() -> new NotFoundException("Utente con ID " + prenotazioneDto.getUtenteId() + " non trovato."));
             existing.setUtente(utente);
-        }
+
 
         existing.setStatoPrenotazione(prenotazioneDto.getStatoPrenotazione());
         existing.setDataPrenotazione(prenotazioneDto.getDataPrenotazione());
@@ -149,6 +150,8 @@ public class PrenotazioneService {
         } else if (prenotazioneDto.getVoloId() == null && existing.getVolo() != null) {
             existing.setVolo(null);
         }
+
+
 
         Prenotazione updatedPrenotazione = prenotazioneRepository.save(existing);
         return convertToResponseDto(updatedPrenotazione);

@@ -2,6 +2,7 @@ package it.epicode.travel_mate.security;
 
 import it.epicode.travel_mate.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -44,7 +45,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll() // Login e registrazione aperti a tutti
 
                 // Endpoint pubblici per GET (voli, viaggi, hotel)
-                .requestMatchers(HttpMethod.GET, "/voli/**", "/viaggi/**", "/hotel", "/utenti", "/hotel/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/voli/**", "/viaggi/**", "/utenti", "/hotel/**").permitAll()
 
                 // Endpoint per la gestione degli hotel: richiedono il ruolo AMMINISTRATORE
                .requestMatchers(HttpMethod.POST, "/hotel").hasRole("AMMINISTRATORE")
@@ -57,18 +58,21 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/viaggi").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.PUT, "/viaggi/**").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.DELETE, "/viaggi/**").hasRole("AMMINISTRATORE")
-                // MODIFICA QUI: Specifica l'ID nel pattern per l'upload immagine viaggio
                 .requestMatchers(HttpMethod.PATCH, "/viaggi/{id}/immagine").hasRole("AMMINISTRATORE")
 
                 // Endpoint per la gestione degli utenti: richiedono il ruolo AMMINISTRATORE
                 .requestMatchers("/utenti/**").hasRole("AMMINISTRATORE")
 
-                        // Endpoint POST per prenotare: accessibile anche agli utenti
-                        .requestMatchers(HttpMethod.POST, "/prenotazioni/**").hasAnyRole("UTENTE", "AMMINISTRATORE")
-
-// Tutti gli altri metodi sulle prenotazioni richiedono solo autenticazione (es. GET per vedere le proprie prenotazioni)
-                        .requestMatchers("/prenotazioni/**").authenticated()
-
+                // Endpoint POST per prenotare: accessibile anche agli utenti
+                .requestMatchers(HttpMethod.POST, "/prenotazioni", "/prenotazioni/**").hasAnyRole("UTENTE", "AMMINISTRATORE")
+                .requestMatchers(HttpMethod.DELETE, "/prenotazioni/**").hasAnyRole("UTENTE", "AMMINISTRATORE")
+                .requestMatchers(HttpMethod.GET, "/prenotazioni", "/prenotazioni/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/recensioni/hotel").hasAnyRole("UTENTE", "AMMINISTRATORE")
+                .requestMatchers(HttpMethod.GET, "/recensioni/viaggio/**").permitAll()  // tutti possono leggere le recensioni.
+                .requestMatchers(HttpMethod.GET, "/recensioni/hotel/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/recensioni/viaggio").hasAnyRole("UTENTE", "AMMINISTRATORE")  // solo utenti autenticati possono crearle
+                .requestMatchers(HttpMethod.PUT, "/recensioni/**").hasAnyRole("UTENTE", "AMMINISTRATORE")  // aggiornamento recensione
+                .requestMatchers(HttpMethod.DELETE, "/recensioni/**").hasAnyRole("UTENTE", "AMMINISTRATORE")  // eliminazione recensione
                 .requestMatchers(HttpMethod.POST, "/email/invia").hasRole("AMMINISTRATORE") // Solo ADMIN può inviare email
                 .requestMatchers("/amministratore/**").hasRole("AMMINISTRATORE")  // solo admin
                 .anyRequest().authenticated()  // tutte le altre devono essere autenticate

@@ -62,5 +62,12 @@ public class JwtTool {
                 .getSubject(); // Estrae il subject (che ora è l'email)
     }
 
-
+    public String getRoleFromToken(String token) {
+        return Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(chiaveSegreta.getBytes()))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class);
+    }
 }

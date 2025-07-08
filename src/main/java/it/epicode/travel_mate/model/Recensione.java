@@ -22,5 +22,7 @@ public class Recensione {
     @ManyToOne
     private  Viaggio viaggio;
 
+    @ManyToOne Hotel hotel;
+
     private LocalDate dataCreazione;
 }

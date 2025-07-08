@@ -17,8 +17,6 @@ public class PrenotazioneDto {
     private LocalDate dataFine;
     private double prezzo;
 
-    private Long utenteId;
-
     private Long viaggioId;
 
     private Long hotelId;

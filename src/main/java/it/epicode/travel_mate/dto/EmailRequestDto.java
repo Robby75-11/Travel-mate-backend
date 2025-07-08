@@ -6,15 +6,12 @@ import lombok.Data;
 
 @Data
 public class EmailRequestDto {
-    @NotBlank(message = "L'indirizzo email del destinatario non può essere vuoto")
-    @Email(message = "L'indirizzo email del destinatario non è valido")
-    private String destinatario;
 
-    @NotBlank(message = "L'oggetto dell'email non può essere vuoto")
-    private String subject;
+private Long idPrenotazione;
+    @NotBlank(message = "il testo dell'email non può essere vuoto")
+    private String testo;
 
-    @NotBlank(message = "Il corpo dell'email non può essere vuoto")
-    private String body;
+   private  String oggetto = "Conferma Prenotazione";
 
 }
 

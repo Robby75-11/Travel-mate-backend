@@ -1,5 +1,6 @@
 package it.epicode.travel_mate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.epicode.travel_mate.enumeration.Ruolo;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -35,6 +36,9 @@ public class Utente implements UserDetails {
     @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Viaggio> viaggiCreati; // 'viaggiOrganizzati'
 
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Recensione> recensioni;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
