@@ -1,5 +1,6 @@
 package it.epicode.travel_mate.controller;
 
+import it.epicode.travel_mate.dto.EmailRequestDto;
 import it.epicode.travel_mate.model.Prenotazione;
 import it.epicode.travel_mate.service.EmailService;
 import it.epicode.travel_mate.service.PrenotazioneService;
@@ -26,10 +27,9 @@ public class EmailController {
     @PreAuthorize("hasRole('AMMINISTRATORE')")
     @PostMapping("/invia")
     @Transactional
-    public ResponseEntity<String> inviaEmailUtente(
-            @RequestParam Long idPrenotazione,
-            @RequestBody String messaggioEmail) {
+    public ResponseEntity<String> inviaEmailUtente(@RequestBody EmailRequestDto emailRequest) {
 
+        Long idPrenotazione = emailRequest.getIdPrenotazione();
         Prenotazione prenotazione = prenotazioneService.getPrenotazioneByIdOptional(idPrenotazione)
                 .orElse(null);
 
@@ -37,15 +37,18 @@ public class EmailController {
             return ResponseEntity.badRequest().body("Prenotazione o utente non trovati");
         }
 
-        if (!"CONFERMATO".equalsIgnoreCase(prenotazione.getStatoPrenotazione().name())) {
+        if (!"CONFERMATA".equalsIgnoreCase(prenotazione.getStatoPrenotazione().name())) {
             return ResponseEntity.status(403).body("Prenotazione non confermata");
         }
 
         try {
             String destinatario = prenotazione.getUtente().getEmail();
-            String oggetto = "Conferma Prenotazione #" + idPrenotazione;
-
-            emailService.sendMail(mittente, destinatario, oggetto, messaggioEmail);
+            emailService.sendMail(
+                    mittente,
+                    destinatario,
+                    emailRequest.getOggetto(),
+                    emailRequest.getTesto()
+            );
             return ResponseEntity.ok("Email inviata a " + destinatario);
         } catch (Exception e) {
             return ResponseEntity.internalServerError()

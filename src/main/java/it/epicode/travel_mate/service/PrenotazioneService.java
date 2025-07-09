@@ -16,6 +16,7 @@ import it.epicode.travel_mate.repository.UtenteRepository;
 import it.epicode.travel_mate.repository.ViaggioRepository;
 import it.epicode.travel_mate.repository.VoloRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -82,7 +83,11 @@ public class PrenotazioneService {
                 .collect(Collectors.toList());
     }
 
-    public PrenotazioneResponseDto savePrenotazione(PrenotazioneDto prenotazioneDto, Utente utente) {
+    public PrenotazioneResponseDto savePrenotazione(PrenotazioneDto prenotazioneDto,  UserDetails userDetails) {
+
+        Utente utente = utenteRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
         Prenotazione prenotazione = new Prenotazione();
 
         prenotazione.setUtente(utente);
@@ -113,13 +118,14 @@ public class PrenotazioneService {
         return convertToResponseDto(savedPrenotazione);
     }
 
-    public PrenotazioneResponseDto updatePrenotazione(Long id, PrenotazioneDto prenotazioneDto, Utente utente) {
+    public PrenotazioneResponseDto updatePrenotazione(Long id, PrenotazioneDto prenotazioneDto, UserDetails userDetails) {
         Prenotazione existing = prenotazioneRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Prenotazione non trovata con id: " + id));
 
-            existing.setUtente(utente);
+              Utente utente = utenteRepository.findByEmail(userDetails.getUsername())
+                      .orElseThrow(() -> new NotFoundException("Utente non trovato con email: " + userDetails.getUsername()));
 
-
+        existing.setUtente(utente);
         existing.setStatoPrenotazione(prenotazioneDto.getStatoPrenotazione());
         existing.setDataPrenotazione(prenotazioneDto.getDataPrenotazione());
         existing.setDestinazione(prenotazioneDto.getDestinazione());
@@ -152,7 +158,6 @@ public class PrenotazioneService {
         }
 
 
-
         Prenotazione updatedPrenotazione = prenotazioneRepository.save(existing);
         return convertToResponseDto(updatedPrenotazione);
     }
@@ -177,6 +182,8 @@ public class PrenotazioneService {
             utenteDto.setNome(prenotazione.getUtente().getNome());
             utenteDto.setCognome(prenotazione.getUtente().getCognome());
             utenteDto.setEmail(prenotazione.getUtente().getEmail());
+            utenteDto.setIndirizzo(prenotazione.getUtente().getIndirizzo());
+            utenteDto.setTelefono(prenotazione.getUtente().getTelefono());
             utenteDto.setRuolo(prenotazione.getUtente().getRuolo());
             dto.setUtente(utenteDto);
         }

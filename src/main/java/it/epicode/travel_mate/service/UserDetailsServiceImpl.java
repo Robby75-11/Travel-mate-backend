@@ -27,22 +27,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Utente utente = utenteRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Utente con email " + email + " non trovato."));
 
-        // 2. Converte il ruolo dell'utente in una GrantedAuthority
-        // Spring Security, quando usi hasRole() in @PreAuthorize o SecurityConfig,
-        // si aspetta che le autorità siano nel formato "ROLE_NOME_RUOLO" (es. "ROLE_AMMINISTRATORE").
-        // Il tuo 'utente.getRuolo().toString()' restituisce "AMMINISTRATORE" (senza "ROLE_").
-        // Quindi, dobbiamo aggiungere il prefisso "ROLE_" qui.
-        List<GrantedAuthority> authorities = Collections.singletonList(
-                new SimpleGrantedAuthority("ROLE_" + utente.getRuolo().toString())
-        );
-
-        // 3. Costruisce e restituisce un oggetto UserDetails utilizzando la classe User di Spring Security
-        // La classe 'org.springframework.security.core.userdetails.User' implementa già UserDetails
-        // e gestisce correttamente la password, lo username e le autorità.
-        return new User(
-                utente.getEmail(),         // Username (che è l'email dell'utente)
-                utente.getPassword(),      // Password (che deve essere già hashata dal tuo sistema)
-                authorities                // Lista delle autorità (ruoli) che Spring Security userà per le verifiche
-        );
+        return utente; // ✅ Restituisci direttamente Utente, che implementa UserDetails
     }
 }

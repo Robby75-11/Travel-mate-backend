@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,9 +25,9 @@ public class PrenotazioneController {
     @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
     public ResponseEntity<PrenotazioneResponseDto> creaPrenotazione(@RequestBody PrenotazioneDto prenotazioneDto,
 
-        @AuthenticationPrincipal Utente utente
+        @AuthenticationPrincipal UserDetails userDetails
     ) {
-        return ResponseEntity.ok(prenotazioneService.savePrenotazione(prenotazioneDto, utente));
+        return ResponseEntity.ok(prenotazioneService.savePrenotazione(prenotazioneDto, userDetails));
     }
 
     @GetMapping // Ora restituisce List di PrenotazioneResponseDto
@@ -70,9 +71,9 @@ public class PrenotazioneController {
     public ResponseEntity<PrenotazioneResponseDto> aggiornaPrenotazione(
             @PathVariable Long id,
             @RequestBody PrenotazioneDto prenotazioneDto,
-            @AuthenticationPrincipal Utente utente // 👉 aggiungi questo parametro
+            @AuthenticationPrincipal UserDetails userDetails // 👉 aggiungi questo parametro
     ) {
-        return ResponseEntity.ok(prenotazioneService.updatePrenotazione(id, prenotazioneDto, utente));
+        return ResponseEntity.ok(prenotazioneService.updatePrenotazione(id, prenotazioneDto, userDetails));
     }
 
     @DeleteMapping("/{id}")
