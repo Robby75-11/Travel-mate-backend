@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,7 +22,14 @@ public class Viaggio {
     private LocalDate dataRitorno;
     private String descrizione;
     private double costoViaggio;
-    private String immagineUrl;
+    @ElementCollection
+    @CollectionTable(name = "viaggio_immagini", joinColumns = @JoinColumn(name = "viaggio_id"))
+    @Column(name = "immagine_url")
+    private List<String> immaginiUrl = new ArrayList<>();
+
+    @Column(name = "immagine_principale")
+    private String immaginePrincipale;
+
 
     @ManyToOne
     @JoinColumn(name = "utente_id")

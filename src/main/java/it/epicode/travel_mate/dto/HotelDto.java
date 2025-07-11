@@ -2,6 +2,8 @@ package it.epicode.travel_mate.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class HotelDto {
 
@@ -17,5 +19,7 @@ public class HotelDto {
 
     private double prezzoNotte;
 
-    private String immagineUrl;
+    private List<String> immaginiUrl;
+
+    private String immaginePrincipale;
 }

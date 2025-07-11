@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,7 +24,10 @@ public class Hotel {
     @Column(columnDefinition = "TEXT")
     private String descrizione;
     private double prezzoNotte;
-    private String immagineUrl;
+
+    private String immaginePrincipale;
+    @ElementCollection
+    private List<String> immaginiUrl = new ArrayList<>();
 
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -33,5 +37,11 @@ public class Hotel {
     @JsonIgnore
     private List<Recensione> recensioni;
 
+    public String getImmaginePrincipale() {
+        return immaginePrincipale;
+    }
 
+    public void setImmaginePrincipale(String immaginePrincipale) {
+        this.immaginePrincipale = immaginePrincipale;
+    }
 }

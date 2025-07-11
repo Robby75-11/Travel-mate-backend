@@ -80,12 +80,12 @@ public class ViaggioController {
 
     // --- Endpoint per CARICARE IMMAGINE Viaggio (PATCH) ---
     @PatchMapping("/{id}/immagine")
-    @PreAuthorize("hasRole('AMMINISTRATORE')")
+   // @PreAuthorize("hasRole('AMMINISTRATORE')")
     public ResponseEntity<ViaggioResponseDto> caricaImmagineViaggio(
             @PathVariable Long id,
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("file") List<MultipartFile> files) {
         try {
-            ViaggioResponseDto updatedViaggioDto = viaggioService.aggiornaImmagineViaggio(id, file);
+            ViaggioResponseDto updatedViaggioDto = viaggioService.aggiornaImmagineViaggio(id, files);
             return ResponseEntity.ok(updatedViaggioDto);
         } catch (IOException e) {
             return ResponseEntity.status(500).body(null);

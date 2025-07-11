@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,6 +30,11 @@ public class ViaggioService {
     private ViaggioResponseDto convertToDto(Viaggio viaggio) {
         ViaggioResponseDto dto = new ViaggioResponseDto();
         BeanUtils.copyProperties(viaggio, dto); // Copia le proprietà corrispondenti
+
+        dto.setImmaginiUrl(viaggio.getImmaginiUrl());
+        dto.setImmaginePrincipale(viaggio.getImmaginePrincipale());
+
+
         return dto;
     }
 
@@ -69,14 +75,25 @@ public class ViaggioService {
         viaggioRepository.deleteById(id);
     }
 
-    public ViaggioResponseDto aggiornaImmagineViaggio(Long id, MultipartFile file) throws IOException {
+    public ViaggioResponseDto aggiornaImmagineViaggio(Long id, List<MultipartFile> files) throws IOException {
         Viaggio viaggio = viaggioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Viaggio con id=" + id + " non trovato"));
 
-        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-        String imageUrl = (String) uploadResult.get("url");
+        List<String> immagini = new ArrayList<>();
 
-        viaggio.setImmagineUrl(imageUrl);
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+                String imageUrl = (String) uploadResult.get("url");
+                immagini.add(imageUrl);
+            }
+        }
+
+        if (!immagini.isEmpty()) {
+            viaggio.setImmaginiUrl(immagini);
+            viaggio.setImmaginePrincipale(immagini.get(0)); // Prima immagine come principale
+        }
+
         return convertToDto(viaggioRepository.save(viaggio));
     }
 }

@@ -90,10 +90,11 @@ public class HotelController {
     @PreAuthorize("hasRole('AMMINISTRATORE')")
     public ResponseEntity<HotelResponseDto> caricaImmagineHotel(
             @PathVariable Long id,
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("files") List<MultipartFile> files) {
         try {
-            HotelResponseDto updatedHotelDto = hotelService.aggiornaImmagineHotel(id, file);
+            HotelResponseDto updatedHotelDto = hotelService.aggiornaImmagineHotel(id, files);
             return ResponseEntity.ok(updatedHotelDto);
+
         } catch (IOException e) {
             return ResponseEntity.status(500).body(null); // O un DTO di errore specifico
         } catch (NotFoundException e) {

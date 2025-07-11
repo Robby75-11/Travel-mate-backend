@@ -3,6 +3,7 @@ package it.epicode.travel_mate.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class ViaggioDto {
@@ -16,4 +17,6 @@ public class ViaggioDto {
     private LocalDate dataInizio;
     private LocalDate dataFine;
     private double costoViaggio;
+    private List<String> immaginiUrl;
+    private String immaginePrincipale;
 }

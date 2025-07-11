@@ -2,6 +2,8 @@ package it.epicode.travel_mate.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class HotelResponseDto {
     private Long id;
@@ -10,5 +12,6 @@ public class HotelResponseDto {
     private String citta;
     private String descrizione;
     private double prezzoNotte;
-    private String immagineUrl;
+    private List<String> immaginiUrl;
+    private String immaginePrincipale;
 }

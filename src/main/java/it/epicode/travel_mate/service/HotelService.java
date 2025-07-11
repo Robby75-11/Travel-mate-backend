@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors; // Per usare .stream().map().collect()
@@ -28,7 +29,10 @@ public class HotelService {
     // Metodo helper per convertire Hotel (Entity) in HotelResponseDto
     private HotelResponseDto convertToDto(Hotel hotel) {
         HotelResponseDto dto = new HotelResponseDto();
-        BeanUtils.copyProperties(hotel, dto); // Copia le proprietà corrispondenti (es. id, nome, indirizzo, ecc.)
+        BeanUtils.copyProperties(hotel, dto);
+
+        dto.setImmaginePrincipale(hotel.getImmaginePrincipale());
+        dto.setImmaginiUrl(hotel.getImmaginiUrl());// Copia le proprietà corrispondenti (es. id, nome, indirizzo, ecc.)
         return dto;
     }
 
@@ -39,6 +43,7 @@ public class HotelService {
         }
         return hotelRepository.save(hotel);
     }
+
     public boolean existsByNome(String nome) {
         return hotelRepository.existsByNome(nome);
     }
@@ -82,16 +87,26 @@ public class HotelService {
     }
 
     // aggiornaImmagineHotel ora restituisce l'HotelResponseDto dell'hotel aggiornato
-    public HotelResponseDto aggiornaImmagineHotel(Long id, MultipartFile file) throws IOException {
+    public HotelResponseDto aggiornaImmagineHotel(Long id, List<MultipartFile> files) throws IOException {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Hotel con id=" + id + " non trovato"));
 
-        // Carica l'immagine su Cloudinary
-        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-        String imageUrl = (String) uploadResult.get("secure_url");
 
-        // Aggiorna l'URL dell'immagine nell'hotel
-        hotel.setImmagineUrl(imageUrl);
-        return convertToDto(hotelRepository.save(hotel)); // Salva e restituisce il DTO aggiornato
+        // Carica l'immagine su Cloudinary
+        List<String> imageUrls = new ArrayList<>();
+        for (MultipartFile file : files) {
+
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String imageUrl = (String) uploadResult.get("url");
+            imageUrls.add(imageUrl);
+        }
+
+        hotel.setImmaginiUrl(imageUrls);
+        if (!imageUrls.isEmpty()) {
+            hotel.setImmaginePrincipale(imageUrls.get(0));
+        }
+        Hotel savedHotel = hotelRepository.save(hotel);
+        return convertToDto(savedHotel);
     }
 }
+

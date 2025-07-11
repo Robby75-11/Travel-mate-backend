@@ -24,6 +24,7 @@ public class PrenotazioneResponseDto {
     private LocalDate viaggioDataPartenza;
     private LocalDate viaggioDataRitorno;
     private String viaggioDescrizione;
+    private String viaggioImmagineUrl;
 
     // Dettagli semplificati dell'Hotel
     private Long hotelId;

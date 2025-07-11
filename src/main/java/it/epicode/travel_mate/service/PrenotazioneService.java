@@ -195,6 +195,8 @@ public class PrenotazioneService {
             dto.setViaggioDataPartenza(prenotazione.getViaggio().getDataPartenza());
             dto.setViaggioDataRitorno(prenotazione.getViaggio().getDataRitorno());
             dto.setViaggioDescrizione(prenotazione.getViaggio().getDescrizione());
+            dto.setViaggioImmagineUrl(prenotazione.getViaggio().getImmaginePrincipale());
+
         }
 
         // Mappatura dei campi dell'entità Hotel
@@ -205,7 +207,7 @@ public class PrenotazioneService {
             dto.setHotelCitta(prenotazione.getHotel().getCitta());
             dto.setHotelDescrizione(prenotazione.getHotel().getDescrizione());
             dto.setHotelPrezzoNotte(prenotazione.getHotel().getPrezzoNotte());
-            dto.setHotelImmagineUrl(prenotazione.getHotel().getImmagineUrl());
+            dto.setHotelImmagineUrl(prenotazione.getHotel().getImmaginePrincipale());
         }
 
         // Mappatura dei campi dell'entità Volo
