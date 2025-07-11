@@ -122,10 +122,7 @@ public class PrenotazioneService {
         Prenotazione existing = prenotazioneRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Prenotazione non trovata con id: " + id));
 
-              Utente utente = utenteRepository.findByEmail(userDetails.getUsername())
-                      .orElseThrow(() -> new NotFoundException("Utente non trovato con email: " + userDetails.getUsername()));
 
-        existing.setUtente(utente);
         existing.setStatoPrenotazione(prenotazioneDto.getStatoPrenotazione());
         existing.setDataPrenotazione(prenotazioneDto.getDataPrenotazione());
         existing.setDestinazione(prenotazioneDto.getDestinazione());

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap; // Importa HashMap
+import java.util.List;
 import java.util.Map;   // Importa Map
 
 
@@ -28,12 +29,12 @@ public class JwtTool {
 //    private UtenteService utenteService; // Lascia commentato se non lo usi
 
     public String createToken(Utente utente){
-        // Creiamo i claims (informazioni aggiuntive) da inserire nel token
+        List<String> roles = List.of("ROLE_" + utente.getRuolo().toString());
         Map<String, Object> claims = new HashMap<>();
         // Aggiungiamo il ruolo dell'utente come claim "role"
         // Assicurati che 'utente.getRuolo()' restituisca il ruolo come stringa (es. "AMMINISTRATORE", "UTENTE")
         // Se utente.getRuolo() restituisce un enum, usa .toString() per ottenere la stringa del ruolo
-        claims.put("role", "ROLE_" + utente.getRuolo().toString()); // <--- MODIFICA CHIAVE QUI
+        claims.put("roles", List.of("ROLE_" + utente.getRuolo().toString())); // <--- MODIFICA CHIAVE QUI
 
         // Creiamo il token
         return Jwts.builder()
@@ -62,12 +63,12 @@ public class JwtTool {
                 .getSubject(); // Estrae il subject (che ora è l'email)
     }
 
-    public String getRoleFromToken(String token) {
+    public List<String> getRolesFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(Keys.hmacShaKeyFor(chiaveSegreta.getBytes()))
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .get("role", String.class);
+                .get("roles", List.class);
     }
 }
