@@ -65,7 +65,14 @@ public class PrenotazioneService {
                 .map(this::convertToResponseDto)
                 .collect(Collectors.toList());
     }
+    public List<PrenotazioneResponseDto> getPrenotazioniByUserEmail(String email) {
+        Utente utente = utenteRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Utente non trovato con email: " + email));
 
+        return prenotazioneRepository.findByUtenteId(utente.getId()).stream()
+                .map(this::convertToResponseDto)
+                .collect(Collectors.toList());
+    }
 
     public boolean esistePrenotazionePerUtenteEViaggio(Long utenteId, Long viaggioId) {
         return prenotazioneRepository.existsByUtente_IdAndViaggio_Id(utenteId, viaggioId);

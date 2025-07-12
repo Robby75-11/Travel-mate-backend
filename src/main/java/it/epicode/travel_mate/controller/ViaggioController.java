@@ -35,14 +35,12 @@ public class ViaggioController {
 
     // --- Endpoint per OTTENERE TUTTI i Viaggi (GET) ---
     @GetMapping
-    @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
     public ResponseEntity<List<ViaggioResponseDto>> getTuttiIViaggi() {
         return ResponseEntity.ok(viaggioService.getAllViaggi());
     }
 
     // --- Endpoint per OTTENERE un Viaggio per ID (GET) ---
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
     public ResponseEntity<ViaggioResponseDto> getViaggioById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(viaggioService.getViaggioById(id));
@@ -79,11 +77,11 @@ public class ViaggioController {
     }
 
     // --- Endpoint per CARICARE IMMAGINE Viaggio (PATCH) ---
-    @PatchMapping("/{id}/immagine")
-   // @PreAuthorize("hasRole('AMMINISTRATORE')")
+    @PatchMapping("/{id}/immagini")
+    @PreAuthorize("hasRole('AMMINISTRATORE')")
     public ResponseEntity<ViaggioResponseDto> caricaImmagineViaggio(
             @PathVariable Long id,
-            @RequestParam("file") List<MultipartFile> files) {
+            @RequestParam("files") List<MultipartFile> files) {
         try {
             ViaggioResponseDto updatedViaggioDto = viaggioService.aggiornaImmagineViaggio(id, files);
             return ResponseEntity.ok(updatedViaggioDto);

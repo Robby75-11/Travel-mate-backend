@@ -32,6 +32,7 @@ public class Prenotazione {
 
     @ManyToOne
     @JoinColumn(name = "utente_id")
+    @JsonIgnore
     private  Utente utente;
 
     @ManyToOne

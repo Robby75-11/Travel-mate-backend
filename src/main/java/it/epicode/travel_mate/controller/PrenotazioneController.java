@@ -32,11 +32,23 @@ public class PrenotazioneController {
 
     @GetMapping // Ora restituisce List di PrenotazioneResponseDto
     @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
-    public ResponseEntity<List<PrenotazioneResponseDto>> getTuttePrenotazioni(@RequestParam(required = false) StatoPrenotazione stato) {
-        if (stato != null) {
-            return ResponseEntity.ok(prenotazioneService.findByStatoPrenotazione(stato));
+    public ResponseEntity<List<PrenotazioneResponseDto>> getPrenotazioniPerUtenteAutenticato(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(required = false) StatoPrenotazione stato) {
+
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_AMMINISTRATORE"));
+
+        if (isAdmin) {
+            // L’amministratore può vedere tutto
+            if (stato != null) {
+                return ResponseEntity.ok(prenotazioneService.findByStatoPrenotazione(stato));
+            }
+            return ResponseEntity.ok(prenotazioneService.getAllPrenotazioni());
+        } else {
+            // L’utente normale vede solo le sue
+            return ResponseEntity.ok(prenotazioneService.getPrenotazioniByUserEmail(userDetails.getUsername()));
         }
-        return ResponseEntity.ok(prenotazioneService.getAllPrenotazioni());
     }
 
     @GetMapping("/{id}") // Ora restituisce PrenotazioneResponseDto

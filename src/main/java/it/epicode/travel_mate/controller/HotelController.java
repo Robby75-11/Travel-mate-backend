@@ -38,7 +38,7 @@ public class HotelController {
     // --- Endpoint per OTTENERE TUTTI gli Hotel (GET) ---
     // Restituisce una lista di HotelResponseDto
     @GetMapping
-    @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
+//    @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
     public ResponseEntity<List<HotelResponseDto>> getTuttiGliHotel() {
         return ResponseEntity.ok(hotelService.getAllHotels());
     }
@@ -46,7 +46,7 @@ public class HotelController {
     // --- Endpoint per OTTENERE un Hotel per ID (GET) ---
     // Restituisce un singolo HotelResponseDto
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
+//    @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
     public ResponseEntity<HotelResponseDto> getHotelById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(hotelService.getHotelById(id));

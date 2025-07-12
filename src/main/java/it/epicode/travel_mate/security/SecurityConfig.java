@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll() // Login e registrazione aperti a tutti
 
                 // Endpoint pubblici per GET (voli, viaggi, hotel)
-                .requestMatchers(HttpMethod.GET, "/voli/**", "/viaggi/**", "/utenti", "/hotel/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/voli/**", "/viaggi/**", "/hotel/**").permitAll()
 
                 // Endpoint per la gestione degli hotel: richiedono il ruolo AMMINISTRATORE
                .requestMatchers(HttpMethod.POST, "/hotel").hasRole("AMMINISTRATORE")

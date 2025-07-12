@@ -31,13 +31,11 @@ public class VoloController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
     public ResponseEntity<List<Volo>> getTuttiIVoli() {
         return ResponseEntity.ok(voloService.getAllVoli());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
     public ResponseEntity<?> getVoloById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(voloService.getVolo(id));

@@ -60,6 +60,12 @@ public class UtenteService {
         return utenteRepository.save(existing);
     }
 
+    public Utente updateRuolo(Long id, Ruolo nuovoRuolo) {
+        Utente utente = getUtente(id); // recupera l'utente o lancia NotFoundException
+        utente.setRuolo(nuovoRuolo);
+        return utenteRepository.save(utente);
+    }
+
     public void deleteUtente(Long id) {
         utenteRepository.deleteById(id);
     }

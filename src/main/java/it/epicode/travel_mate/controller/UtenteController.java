@@ -1,6 +1,8 @@
 package it.epicode.travel_mate.controller;
 
 import it.epicode.travel_mate.dto.UtenteDto;
+import it.epicode.travel_mate.dto.UtenteResponseDto;
+import it.epicode.travel_mate.enumeration.Ruolo;
 import it.epicode.travel_mate.exception.NotFoundException;
 import it.epicode.travel_mate.model.Utente;
 import it.epicode.travel_mate.service.UtenteService;
@@ -63,6 +65,26 @@ public class UtenteController {
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PatchMapping("/{id}/ruolo")
+    @PreAuthorize("hasRole('AMMINISTRATORE')")
+    public ResponseEntity<UtenteResponseDto> aggiornaRuoloUtente(
+            @PathVariable Long id,
+            @RequestParam Ruolo ruolo) {
+        Utente aggiornato = utenteService.updateRuolo(id, ruolo);
+
+        // Costruzione manuale del DTO per evitare cicli o dati sensibili
+        UtenteResponseDto dto = new UtenteResponseDto();
+        dto.setId(aggiornato.getId());
+        dto.setNome(aggiornato.getNome());
+        dto.setCognome(aggiornato.getCognome());
+        dto.setEmail(aggiornato.getEmail());
+        dto.setIndirizzo(aggiornato.getIndirizzo());
+        dto.setTelefono(aggiornato.getTelefono());
+        dto.setRuolo(aggiornato.getRuolo());
+
+        return ResponseEntity.ok(dto);
     }
 
     // ELIMINA utente
