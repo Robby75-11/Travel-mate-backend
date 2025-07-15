@@ -23,6 +23,8 @@ public class Hotel {
 
     @Column(columnDefinition = "TEXT")
     private String descrizione;
+    @Column(nullable = false)
+    private int stelle = 3;
     private double prezzoNotte;
 
     private String immaginePrincipale;

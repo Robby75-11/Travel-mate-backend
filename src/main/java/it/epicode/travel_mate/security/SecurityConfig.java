@@ -43,26 +43,20 @@ public class SecurityConfig {
 
         httpSecurity.authorizeHttpRequests(http->http
                 .requestMatchers("/auth/**").permitAll() // Login e registrazione aperti a tutti
-
                 // Endpoint pubblici per GET (voli, viaggi, hotel)
                 .requestMatchers(HttpMethod.GET, "/voli/**", "/viaggi/**", "/hotel/**").permitAll()
-
                 // Endpoint per la gestione degli hotel: richiedono il ruolo AMMINISTRATORE
                .requestMatchers(HttpMethod.POST, "/hotel").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.PUT, "/hotel/**").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.DELETE, "/hotel/{id}").hasRole("AMMINISTRATORE")
-
                 .requestMatchers(HttpMethod.PATCH, "/hotel/{id}/immagine").hasRole("AMMINISTRATORE")
-
                 // Endpoint per la gestione dei viaggi: richiedono il ruolo AMMINISTRATORE
                 .requestMatchers(HttpMethod.POST, "/viaggi").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.PUT, "/viaggi/**").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.DELETE, "/viaggi/**").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.PATCH, "/viaggi/{id}/immagine").hasRole("AMMINISTRATORE")
-
                 // Endpoint per la gestione degli utenti: richiedono il ruolo AMMINISTRATORE
                 .requestMatchers("/utenti/**").hasRole("AMMINISTRATORE")
-
                 // Endpoint POST per prenotare: accessibile anche agli utenti
                 .requestMatchers(HttpMethod.POST, "/prenotazioni", "/prenotazioni/**").hasAnyRole("UTENTE", "AMMINISTRATORE")
                 .requestMatchers(HttpMethod.PUT, "/prenotazioni/**").hasRole("AMMINISTRATORE")

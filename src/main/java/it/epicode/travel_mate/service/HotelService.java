@@ -75,6 +75,7 @@ public class HotelService {
         hotel.setCitta(hotelDetails.getCitta());
         hotel.setDescrizione(hotelDetails.getDescrizione());
         hotel.setPrezzoNotte(hotelDetails.getPrezzoNotte());
+        hotel.setStelle(hotelDetails.getStelle());
 
         return convertToDto(hotelRepository.save(hotel)); // Salva e restituisce il DTO aggiornato
     }

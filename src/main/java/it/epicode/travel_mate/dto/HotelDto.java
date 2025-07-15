@@ -17,6 +17,8 @@ public class HotelDto {
 
     private String descrizione;
 
+    private int stelle;
+
     private double prezzoNotte;
 
     private List<String> immaginiUrl;

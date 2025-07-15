@@ -22,6 +22,7 @@ public class Viaggio {
     private LocalDate dataRitorno;
     private String descrizione;
     private double costoViaggio;
+
     @ElementCollection
     @CollectionTable(name = "viaggio_immagini", joinColumns = @JoinColumn(name = "viaggio_id"))
     @Column(name = "immagine_url")
