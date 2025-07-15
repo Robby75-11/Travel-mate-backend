@@ -1,6 +1,7 @@
 package it.epicode.travel_mate.controller;
 
 
+import it.epicode.travel_mate.dto.VoloResponseDto;
 import it.epicode.travel_mate.exception.NotFoundException;
 import it.epicode.travel_mate.model.Volo;
 import it.epicode.travel_mate.service.VoloService;
@@ -10,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -57,6 +60,23 @@ public class VoloController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PatchMapping("/{id}/immagine")
+    @PreAuthorize("hasRole('AMMINISTRATORE')")
+    public ResponseEntity<VoloResponseDto> caricaImmagineVolo(
+
+        @PathVariable Long id,
+    @RequestParam("files") List<MultipartFile> files) {
+        try {
+            VoloResponseDto updatedVoloDto = voloService.aggiornaImmagineVolo(id, files);
+            return ResponseEntity.ok(updatedVoloDto);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(null);
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('AMMINISTRATORE')")

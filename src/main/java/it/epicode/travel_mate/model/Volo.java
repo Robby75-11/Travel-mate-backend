@@ -22,6 +22,7 @@ public class Volo {
     private double costoVolo;
     @Column(unique = true, nullable = false)
     private String numeroVolo;
+    private String immaginePrincipale;
 
     @OneToMany(mappedBy = "volo", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
