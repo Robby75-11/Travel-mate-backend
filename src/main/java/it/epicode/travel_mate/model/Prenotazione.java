@@ -24,7 +24,8 @@ public class Prenotazione {
     private LocalDate dataFine;
     @Column(nullable = false)
     private double prezzo;
-
+    @Column(nullable = false)
+    private int numeroPasseggeri = 1;
     private LocalDate dataPrenotazione;
 
     @Enumerated(EnumType.STRING)

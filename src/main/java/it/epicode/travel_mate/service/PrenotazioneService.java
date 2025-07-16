@@ -104,6 +104,7 @@ public class PrenotazioneService {
         prenotazione.setDataInizio(prenotazioneDto.getDataInizio());
         prenotazione.setDataFine(prenotazioneDto.getDataFine());
         prenotazione.setPrezzo(prenotazioneDto.getPrezzo());
+        prenotazione.setNumeroPasseggeri(prenotazioneDto.getNumeroPasseggeri());
 
         if (prenotazioneDto.getViaggioId() != null) {
             Viaggio viaggio = viaggioRepository.findById(prenotazioneDto.getViaggioId())
@@ -179,6 +180,7 @@ public class PrenotazioneService {
         dto.setDataInizio(prenotazione.getDataInizio());
         dto.setDataFine(prenotazione.getDataFine());
         dto.setPrezzo(prenotazione.getPrezzo());
+        dto.setNumeroPasseggeri(prenotazione.getNumeroPasseggeri());
 
         if (prenotazione.getUtente() != null) {
             UtenteResponseDto utenteDto = new UtenteResponseDto();
@@ -223,6 +225,9 @@ public class PrenotazioneService {
             dto.setVoloDataOraPartenza(prenotazione.getVolo().getDataOraPartenza());
             dto.setVoloDataOraArrivo(prenotazione.getVolo().getDataOraArrivo());
             dto.setCostoVolo(prenotazione.getVolo().getCostoVolo());
+            dto.setPrezzo(prenotazione.getVolo().getCostoVolo() * prenotazione.getNumeroPasseggeri());
+            dto.setVoloImmagineUrl(prenotazione.getVolo().getImmaginePrincipale());
+
         }
 
         return dto;
