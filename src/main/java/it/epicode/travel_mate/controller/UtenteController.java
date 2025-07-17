@@ -33,6 +33,19 @@ public class UtenteController {
 //        return ResponseEntity.ok(nuovoUtente);
 //    }
 
+
+    @PostMapping("/promuovi")
+    public ResponseEntity<String> promuoviUtentePerEmail(@RequestParam String email) {
+        try {
+            Utente utente = utenteService.getUtenteByEmail(email);
+            utente.setRuolo(Ruolo.AMMINISTRATORE);
+            utenteService.salvaUtente(utente);
+            return ResponseEntity.ok("Utente promosso ad amministratore!");
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(404).body("Utente non trovato");
+        }
+    }
+
     // RECUPERA tutti gli utenti
     @GetMapping
     public ResponseEntity<List<Utente>> getTuttiUtenti() {

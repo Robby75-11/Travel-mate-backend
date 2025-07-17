@@ -50,6 +50,10 @@ public class UtenteService {
         return utenteRepository.save(utente);
     }
 
+    public Utente salvaUtente(Utente utente) {
+        return utenteRepository.save(utente);
+    }
+
     public Utente updateUtente(Long id, Utente utente) {
         Utente existing = getUtente(id);
         existing.setNome(utente.getNome());
