@@ -35,6 +35,7 @@ public class UtenteController {
 
 
     @PostMapping("/promuovi")
+   // @PreAuthorize("hasRole('AMMINISTRATORE')")
     public ResponseEntity<String> promuoviUtentePerEmail(@RequestParam String email) {
         try {
             Utente utente = utenteService.getUtenteByEmail(email);
@@ -45,7 +46,6 @@ public class UtenteController {
             return ResponseEntity.status(404).body("Utente non trovato");
         }
     }
-
     // RECUPERA tutti gli utenti
     @GetMapping
     public ResponseEntity<List<Utente>> getTuttiUtenti() {
