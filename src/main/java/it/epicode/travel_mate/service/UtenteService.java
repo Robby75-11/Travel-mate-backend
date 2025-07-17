@@ -28,8 +28,9 @@ public class UtenteService {
     public List<Utente> getAllUtenti() {
         return utenteRepository.findAll();
     }
+
     public Utente getUtenteByEmail(String email) {
-        return utenteRepository.findByEmail(email)
+        return utenteRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new NotFoundException("Utente non trovato con email: " + email));
     }
 
