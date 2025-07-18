@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/viaggi").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.PUT, "/viaggi/**").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.DELETE, "/viaggi/**").hasRole("AMMINISTRATORE")
-                .requestMatchers(HttpMethod.PATCH, "/viaggi/{id}/immagine").hasRole("AMMINISTRATORE")
+                .requestMatchers(HttpMethod.PATCH, "/viaggi/{id}/immagini").hasRole("AMMINISTRATORE")
                 // Endpoint per la gestione degli utenti: richiedono il ruolo AMMINISTRATORE
                 .requestMatchers("/utenti/**").hasRole("AMMINISTRATORE")
                 // Endpoint POST per prenotare: accessibile anche agli utenti
