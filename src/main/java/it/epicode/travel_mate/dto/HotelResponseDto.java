@@ -13,6 +13,9 @@ public class HotelResponseDto {
     private String descrizione;
     private int stelle;
     private double prezzoNotte;
+    private Double latitudine;
+    private Double longitudine;
+
     private List<String> immaginiUrl;
     private String immaginePrincipale;
 }
