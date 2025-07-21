@@ -14,6 +14,7 @@ public class RecensioneDto {
     private Long utenteId;
     private  String utenteNome;
     private String utenteCognome;
-
+    private String tipo; // "hotel" o "viaggio"
+    private String destinazioneNome; // nome dell'hotel o titolo del viaggio
 
 }

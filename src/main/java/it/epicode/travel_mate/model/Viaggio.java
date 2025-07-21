@@ -16,7 +16,7 @@ public class Viaggio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private String titolo;
     private String destinazione;
     private LocalDate dataPartenza;
     private LocalDate dataRitorno;

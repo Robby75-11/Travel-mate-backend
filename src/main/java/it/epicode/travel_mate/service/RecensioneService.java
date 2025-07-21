@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Collectors;
+
 
 @Service
 public class RecensioneService {
@@ -41,7 +41,7 @@ public class RecensioneService {
                 .collect(Collectors.toList());
 
     }
-    private RecensioneDto convertToDto(Recensione r) {
+    public RecensioneDto convertToDto(Recensione r) {
         RecensioneDto dto = new RecensioneDto();
         dto.setId(r.getId());
         dto.setContenuto(r.getContenuto());
@@ -50,10 +50,19 @@ public class RecensioneService {
         dto.setUtenteId(r.getUtente().getId());
         dto.setUtenteNome(r.getUtente().getNome());
         dto.setUtenteCognome(r.getUtente().getCognome());
+
+        if (r.getHotel() != null) {
+            dto.setTipo("hotel");
+            dto.setDestinazioneNome(r.getHotel().getNome());
+        } else if (r.getViaggio() != null) {
+            dto.setTipo("viaggio");
+            dto.setDestinazioneNome(r.getViaggio().getTitolo());
+        } else {
+            dto.setTipo("N/D");
+            dto.setDestinazioneNome("N/D");
+        }
         return dto;
     }
-
-
 
                 //Per Recensioni Viaggi
     public Recensione aggiungiRecensioneViaggio(Long utenteId, Long viaggioId, Recensione recensione) {
@@ -69,11 +78,22 @@ public class RecensioneService {
         recensione.setUtente(utente);
         recensione.setDataCreazione(LocalDate.now());
 
+        if (recensione.getContenuto() == null) {
+            recensione.setContenuto("");  // oppure lancia errore
+        }
+
+
         return recensioneRepository.save(recensione);
     }
     //Per Recensioni Hotel
     public List<RecensioneDto> getRecensioniByHotel(Long hotelId) {
         return recensioneRepository.findByHotelId(hotelId).stream().map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<RecensioneDto> getAllRecensioni() {
+        return recensioneRepository.findAll().stream()
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
@@ -91,31 +111,19 @@ public class RecensioneService {
         recensione.setUtente(utente);
         recensione.setDataCreazione(LocalDate.now());
 
+        if (recensione.getContenuto() == null) {
+            recensione.setContenuto("");  // oppure lancia errore
+        }
+
+
         return recensioneRepository.save(recensione);
     }
 
 
-    public void eliminaRecensione(Long id, Long utenteId) {
+    public void eliminaRecensioneAmministratore(Long id) {
         Recensione recensione = recensioneRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Recensione non trovata con id " + id));
-        if (!recensione.getUtente().getId().equals(utenteId)) {
-            throw new UnAuthorizedException("Non sei autorizzato ad eliminare questa recensione");
-        }
         recensioneRepository.delete(recensione);
     }
 
-    public Recensione aggiornaRecensione(Long id, Long utenteId, Recensione nuovaRecensione) {
-        Recensione recensioneEsistente = recensioneRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Recensione non trovata con id " + id));
-        if (!recensioneEsistente.getUtente().getId().equals(utenteId)) {
-            throw new UnAuthorizedException("Non sei autorizzato ad aggiornare questa recensione");
-        }
-
-        recensioneEsistente.setContenuto(nuovaRecensione.getContenuto());
-        recensioneEsistente.setValutazione(nuovaRecensione.getValutazione());
-        return recensioneRepository.save(recensioneEsistente);
-    }
-
-
-
-}
+   }

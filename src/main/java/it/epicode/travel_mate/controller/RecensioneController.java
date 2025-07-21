@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/recensioni")
@@ -39,6 +40,13 @@ public class RecensioneController {
         return ResponseEntity.ok(recensioni);
     }
 
+    @PreAuthorize("hasRole('AMMINISTRATORE')")
+    @GetMapping("/all")
+    public ResponseEntity<List<RecensioneDto>> getAllRecensioni() {
+        List<RecensioneDto> recensioni = recensioneService.getAllRecensioni();
+        return ResponseEntity.ok(recensioni);
+    }
+
     // === POST ===
     @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
     @PostMapping("/viaggio")
@@ -51,9 +59,10 @@ public class RecensioneController {
                 recensione.getViaggio().getId(),
                 recensione
         );
-        RecensioneDto dto = convertToDto(nuova);
-        return ResponseEntity.ok(dto);
+
+        return ResponseEntity.ok(recensioneService.convertToDto(nuova));
     }
+
     @PreAuthorize("hasAnyRole('UTENTE', 'AMMINISTRATORE')")
     @PostMapping("/hotel")
     public ResponseEntity<RecensioneDto> creaRecensioneHotel(@RequestBody Recensione recensione, @AuthenticationPrincipal UserDetails userDetails) {
@@ -65,44 +74,17 @@ public class RecensioneController {
                 recensione.getHotel().getId(),
                 recensione
         );
-        RecensioneDto dto = convertToDto(nuova);
-        return ResponseEntity.ok(dto);
+
+        return ResponseEntity.ok(recensioneService.convertToDto(nuova));
     }
 
-    // === PUT ===
-
-    @PutMapping("/{id}")
-    public ResponseEntity<RecensioneDto> aggiorna(@PathVariable Long id,
-                                                  @RequestBody Recensione recensione,
-                                                  @AuthenticationPrincipal UserDetails userDetails) {
-        Utente utente = utenteRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new NotFoundException("Utente non trovato"));
-
-        Recensione aggiornata = recensioneService.aggiornaRecensione(id, utente.getId(), recensione);
-        RecensioneDto dto = convertToDto(aggiornata);
-        return ResponseEntity.ok(dto);
-    }
     // === DELETE ===
-
+    @PreAuthorize("hasRole('AMMINISTRATORE')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> elimina(@PathVariable Long id,
-                                        @AuthenticationPrincipal UserDetails userDetails) {
-        Utente utente = utenteRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new NotFoundException("Utente non trovato"));
+    public ResponseEntity<Void> eliminaRecensioneAmministratore(@PathVariable Long id) {
 
-        recensioneService.eliminaRecensione(id, utente.getId());
+        recensioneService.eliminaRecensioneAmministratore(id);
         return ResponseEntity.noContent().build();
     }
 
-    private RecensioneDto convertToDto(Recensione r) {
-        RecensioneDto dto = new RecensioneDto();
-        dto.setId(r.getId());
-        dto.setContenuto(r.getContenuto());
-        dto.setValutazione(r.getValutazione());
-        dto.setDataCreazione(r.getDataCreazione());
-        dto.setUtenteId(r.getUtente().getId());
-        dto.setUtenteNome(r.getUtente().getNome());
-        dto.setUtenteCognome(r.getUtente().getCognome());
-        return dto;
-    }
 }
