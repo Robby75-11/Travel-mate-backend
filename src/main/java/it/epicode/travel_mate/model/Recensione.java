@@ -27,6 +27,6 @@ public class Recensione {
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
-    
+
     private LocalDate dataCreazione;
 }
