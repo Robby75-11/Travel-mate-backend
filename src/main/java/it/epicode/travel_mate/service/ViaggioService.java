@@ -84,7 +84,7 @@ public class ViaggioService {
         for (MultipartFile file : files) {
             if (!file.isEmpty()) {
                 Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-                String imageUrl = (String) uploadResult.get("url");
+                String imageUrl = (String) uploadResult.get("secure_url");
                 immagini.add(imageUrl);
             }
         }
