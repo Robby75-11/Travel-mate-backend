@@ -59,7 +59,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/viaggi").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.PUT, "/viaggi/**").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.DELETE, "/viaggi/**").hasRole("AMMINISTRATORE")
-                .requestMatchers(HttpMethod.PATCH, "/viaggi/{id}/immagine").hasRole("AMMINISTRATORE")
+                .requestMatchers(HttpMethod.PATCH, "/viaggi/{id}/immagini").hasRole("AMMINISTRATORE")
                 // Endpoint per la gestione degli utenti: richiedono il ruolo AMMINISTRATORE
                 .requestMatchers(HttpMethod.POST, "/utenti/promuovi").permitAll() // 👈 PERMETTE SOLO QUESTO ENDPOINT
                 .requestMatchers("/utenti/**").hasRole("AMMINISTRATORE") // 👈 TUTTI GLI ALTRI SONO ANCORA PROTETTI
@@ -68,12 +68,13 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/prenotazioni/**").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.DELETE, "/prenotazioni/**").hasAnyRole("UTENTE", "AMMINISTRATORE")
                 .requestMatchers(HttpMethod.GET, "/prenotazioni", "/prenotazioni/**").authenticated()
+                // Endpoint POST per recensioni: accessibile anche agli utenti
                 .requestMatchers(HttpMethod.POST, "/recensioni/hotel").hasAnyRole("UTENTE", "AMMINISTRATORE")
                 .requestMatchers(HttpMethod.GET, "/recensioni/viaggio/**").permitAll()  // tutti possono leggere le recensioni.
                 .requestMatchers(HttpMethod.GET, "/recensioni/hotel/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/recensioni/viaggio").hasAnyRole("UTENTE", "AMMINISTRATORE")  // solo utenti autenticati possono crearle
-                .requestMatchers(HttpMethod.PUT, "/recensioni/**").hasAnyRole("UTENTE", "AMMINISTRATORE")  // aggiornamento recensione
-                .requestMatchers(HttpMethod.DELETE, "/recensioni/**").hasAnyRole("UTENTE", "AMMINISTRATORE")  // eliminazione recensione
+                .requestMatchers(HttpMethod.GET, "/recensioni/all").hasRole("AMMINISTRATORE")
+                .requestMatchers(HttpMethod.DELETE, "/recensioni/**").hasRole("AMMINISTRATORE")  // eliminazione recensione
                 .requestMatchers(HttpMethod.POST, "/email/invia").hasRole("AMMINISTRATORE") // Solo ADMIN può inviare email
                 .requestMatchers("/amministratore/**").hasRole("AMMINISTRATORE")  // solo admin
                 .anyRequest().authenticated()  // tutte le altre devono essere autenticate

@@ -100,7 +100,6 @@ public class PrenotazioneService {
         prenotazione.setUtente(utente);
         prenotazione.setDataPrenotazione(prenotazioneDto.getDataPrenotazione());
         prenotazione.setStatoPrenotazione(prenotazioneDto.getStatoPrenotazione());
-        prenotazione.setDestinazione(prenotazioneDto.getDestinazione());
         prenotazione.setDataInizio(prenotazioneDto.getDataInizio());
         prenotazione.setDataFine(prenotazioneDto.getDataFine());
         prenotazione.setPrezzo(prenotazioneDto.getPrezzo());
@@ -110,16 +109,19 @@ public class PrenotazioneService {
             Viaggio viaggio = viaggioRepository.findById(prenotazioneDto.getViaggioId())
                     .orElseThrow(() -> new NotFoundException("Viaggio con ID " + prenotazioneDto.getViaggioId() + " non trovato."));
             prenotazione.setViaggio(viaggio);
+            prenotazione.setDestinazione(viaggio.getDestinazione());
         }
         if (prenotazioneDto.getHotelId() != null) {
             Hotel hotel = hotelRepository.findById(prenotazioneDto.getHotelId())
                     .orElseThrow(() -> new NotFoundException("Hotel con ID " + prenotazioneDto.getHotelId() + " non trovato."));
             prenotazione.setHotel(hotel);
+            prenotazione.setDestinazione(hotel.getNome());
         }
         if (prenotazioneDto.getVoloId() != null) {
             Volo volo = voloRepository.findById(prenotazioneDto.getVoloId())
                     .orElseThrow(() -> new NotFoundException("Volo con ID " + prenotazioneDto.getVoloId() + " non trovato."));
             prenotazione.setVolo(volo);
+            prenotazione.setDestinazione(volo.getAeroportoArrivo());
         }
 
         Prenotazione savedPrenotazione = prenotazioneRepository.save(prenotazione);

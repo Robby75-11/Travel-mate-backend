@@ -21,6 +21,10 @@ public class HotelDto {
 
     private double prezzoNotte;
 
+    private Double latitudine;
+    private Double longitudine;
+
+
     private List<String> immaginiUrl;
 
     private String immaginePrincipale;

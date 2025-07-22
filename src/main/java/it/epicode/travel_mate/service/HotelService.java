@@ -1,5 +1,6 @@
 package it.epicode.travel_mate.service;
 
+import it.epicode.travel_mate.service.GeocodingService;
 import it.epicode.travel_mate.dto.HotelResponseDto; // Importa il DTO di risposta
 import it.epicode.travel_mate.exception.NotFoundException;
 import it.epicode.travel_mate.model.Hotel;
@@ -16,13 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors; // Per usare .stream().map().collect()
+import java.util.stream.Stream;
 
 @Service
 public class HotelService {
 
     @Autowired
     private HotelRepository hotelRepository;
-
+    @Autowired
+    private GeocodingService geocodingService;
     @Autowired
     private Cloudinary cloudinary; // Assicurati che Cloudinary sia configurato come Bean
 
@@ -41,9 +44,43 @@ public class HotelService {
         if (existsByNome(hotel.getNome())) {
             throw new IllegalArgumentException("Esiste già un hotel con il nome: " + hotel.getNome());
         }
-        return hotelRepository.save(hotel);
-    }
 
+        try {
+            boolean indirizzoPresente = hotel.getIndirizzo() != null && !hotel.getIndirizzo().isBlank();
+            boolean cittaPresente = hotel.getCitta() != null && !hotel.getCitta().isBlank();
+            boolean coordinateAssenti = hotel.getLatitudine() == null || hotel.getLongitudine() == null;
+
+            if (indirizzoPresente && cittaPresente && coordinateAssenti) {
+                String indirizzoFormattato = normalizzaIndirizzo(
+                        (hotel.getIndirizzo().contains(hotel.getCitta()) ? hotel.getIndirizzo() : hotel.getIndirizzo() + ", " + hotel.getCitta() + ", Italia")
+                );
+
+
+                System.out.println(">>> Geocodifica indirizzo: " + indirizzoFormattato);
+
+                double[] coords = geocodingService.getCoordinatesFromAddress(indirizzoFormattato);
+
+                hotel.setLatitudine(coords[0]);
+                hotel.setLongitudine(coords[1]);
+                System.out.println(">>> Coordinate ottenute: lat=" + coords[0] + ", lon=" + coords[1]);
+            } else {
+                System.out.println(">>> Geocoding saltato per hotel: " + hotel.getNome());
+            }
+        } catch (Exception e) {
+            System.err.println(">>> Errore durante la geocodifica di: " + hotel.getNome());
+            e.printStackTrace();
+        }
+
+        return hotelRepository.save(hotel);
+
+    }
+    private String normalizzaIndirizzo(String indirizzo) {
+        return indirizzo
+                .replaceAll("\\bDi\\b", "di")
+                .replaceAll("\\bDella\\b", "della")
+                .replaceAll("\\s+", " ") // rimuove spazi multipli
+                .trim();
+    }
     public boolean existsByNome(String nome) {
         return hotelRepository.existsByNome(nome);
     }
@@ -69,15 +106,44 @@ public class HotelService {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Hotel con id=" + id + " non trovato"));
 
-        // Aggiorna solo i campi che possono essere modificati tramite PUT/DTO
+        boolean indirizzoCambiato = hotelDetails.getIndirizzo() != null &&
+                !hotelDetails.getIndirizzo().equalsIgnoreCase(hotel.getIndirizzo());
+
+        boolean cittaCambiata = hotelDetails.getCitta() != null &&
+                !hotelDetails.getCitta().equalsIgnoreCase(hotel.getCitta());
+
+        boolean mancanoCoordinate = hotel.getLatitudine() == null || hotel.getLongitudine() == null;
+
+        // Aggiorna i dati
         hotel.setNome(hotelDetails.getNome());
-        hotel.setIndirizzo(hotelDetails.getIndirizzo()); // Reintrodotto
+        hotel.setIndirizzo(hotelDetails.getIndirizzo());
         hotel.setCitta(hotelDetails.getCitta());
         hotel.setDescrizione(hotelDetails.getDescrizione());
         hotel.setPrezzoNotte(hotelDetails.getPrezzoNotte());
         hotel.setStelle(hotelDetails.getStelle());
 
-        return convertToDto(hotelRepository.save(hotel)); // Salva e restituisce il DTO aggiornato
+        // Forza il geocoding se è cambiato qualcosa o mancano coordinate
+        if ((indirizzoCambiato || cittaCambiata || mancanoCoordinate) &&
+                hotel.getIndirizzo() != null && hotel.getCitta() != null) {
+
+            try {
+                String indirizzoFormattato = costruisciIndirizzoPulito(hotel);
+                double[] coords = geocodingService.getCoordinatesFromAddress(indirizzoFormattato);
+                hotel.setLatitudine(coords[0]);
+                hotel.setLongitudine(coords[1]);
+                          } catch (Exception e) {
+                              e.printStackTrace();
+
+            }
+        }
+
+        return convertToDto(hotelRepository.save(hotel));
+    }
+
+    private String costruisciIndirizzoPulito(Hotel hotel) {
+        return Stream.of(hotel.getIndirizzo(), hotel.getCitta(), "Italia")
+                .filter(s -> s != null && !s.trim().isEmpty())
+                .collect(Collectors.joining(", "));
     }
 
     public void deleteHotel(Long id) {
@@ -92,22 +158,31 @@ public class HotelService {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Hotel con id=" + id + " non trovato"));
 
+        // Verifica che siano presenti file da caricare
+        if (files == null || files.isEmpty()) {
+            throw new IllegalArgumentException("Nessuna immagine fornita per l'upload.");
+        }
 
-        // Carica l'immagine su Cloudinary
         List<String> imageUrls = new ArrayList<>();
+
+        // Carica ogni file su Cloudinary
         for (MultipartFile file : files) {
-
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-            String imageUrl = (String) uploadResult.get("url");
-            imageUrls.add(imageUrl);
+            if (!file.isEmpty()) {
+                Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+                String imageUrl = (String) uploadResult.get("url");
+                imageUrls.add(imageUrl);
+            }
         }
 
-        hotel.setImmaginiUrl(imageUrls);
+        // Aggiorna le immagini solo se almeno una è stata caricata
         if (!imageUrls.isEmpty()) {
-            hotel.setImmaginePrincipale(imageUrls.get(0));
+            hotel.setImmaginiUrl(imageUrls);
+            hotel.setImmaginePrincipale(imageUrls.get(0)); // Prima immagine come principale
         }
+
         Hotel savedHotel = hotelRepository.save(hotel);
         return convertToDto(savedHotel);
     }
+
 }
 

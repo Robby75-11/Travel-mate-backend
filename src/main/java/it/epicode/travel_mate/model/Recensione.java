@@ -17,12 +17,16 @@ public class Recensione {
     private  int valutazione;
 
     @ManyToOne
+    @JoinColumn(name = "utente_id")
     private  Utente utente;
 
     @ManyToOne
+    @JoinColumn(name = "viaggio_id")
     private  Viaggio viaggio;
 
-    @ManyToOne Hotel hotel;
+    @ManyToOne
+    @JoinColumn(name = "hotel_id")
+    private Hotel hotel;
 
     private LocalDate dataCreazione;
 }

@@ -26,6 +26,10 @@ public class Hotel {
     @Column(nullable = false)
     private int stelle = 3;
     private double prezzoNotte;
+    @Column
+    private Double latitudine;
+    @Column
+    private Double longitudine;
 
     private String immaginePrincipale;
     @ElementCollection
