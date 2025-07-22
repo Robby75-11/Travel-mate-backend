@@ -2,14 +2,11 @@ package it.epicode.travel_mate;
 
 import com.cloudinary.Cloudinary;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Configuration

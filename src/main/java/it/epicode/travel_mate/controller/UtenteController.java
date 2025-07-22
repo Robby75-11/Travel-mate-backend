@@ -23,16 +23,6 @@ public class UtenteController {
     @Autowired
     private UtenteService utenteService;
 
-
- //   @PostMapping
-//    public ResponseEntity<?> creaUtente(@Valid @RequestBody UtenteDto utenteDto, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
-//        }
-//        Utente nuovoUtente = utenteService.saveUtente(utenteDto);
-//        return ResponseEntity.ok(nuovoUtente);
-//    }
-
     // RECUPERA tutti gli utenti
     @GetMapping
     public ResponseEntity<List<Utente>> getTuttiUtenti() {

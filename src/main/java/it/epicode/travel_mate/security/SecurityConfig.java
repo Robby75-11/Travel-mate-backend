@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/prenotazioni/**").hasRole("AMMINISTRATORE")
                 .requestMatchers(HttpMethod.DELETE, "/prenotazioni/**").hasAnyRole("UTENTE", "AMMINISTRATORE")
                 .requestMatchers(HttpMethod.GET, "/prenotazioni", "/prenotazioni/**").authenticated()
+                // Endpoint POST per recensioni: accessibile anche agli utenti
                 .requestMatchers(HttpMethod.POST, "/recensioni/hotel").hasAnyRole("UTENTE", "AMMINISTRATORE")
                 .requestMatchers(HttpMethod.GET, "/recensioni/viaggio/**").permitAll()  // tutti possono leggere le recensioni.
                 .requestMatchers(HttpMethod.GET, "/recensioni/hotel/**").permitAll()

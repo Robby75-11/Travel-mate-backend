@@ -89,7 +89,7 @@ public class PrenotazioneController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('AMMINISTRATORE')")
+   // @PreAuthorize("hasRole('AMMINISTRATORE')")
     public ResponseEntity<Void> eliminaPrenotazione(@PathVariable Long id) {
         prenotazioneService.deletePrenotazione(id);
         return ResponseEntity.noContent().build();
