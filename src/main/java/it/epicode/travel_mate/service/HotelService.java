@@ -82,14 +82,19 @@ public class HotelService {
             if (hotel.getLatitudine() == null || hotel.getLongitudine() == null) {
                 try {
                     String indirizzoCompleto = hotel.getIndirizzo() + ", " + hotel.getCitta() + ", Italia";
-                    System.out.println(">>> Provo geocoding per: " + indirizzoCompleto);
+                    System.out.println(">>> [GEOCODING] Hotel ID: " + hotel.getId() + " → Indirizzo: " + indirizzoCompleto);
                     double[] coordinate = geocodingService.getCoordinatesFromAddress(indirizzoCompleto);
+                    System.out.println(">>> [GEOCODING SUCCESS] LAT: " + coordinate[0] + " - LNG: " + coordinate[1]);
+
                     hotel.setLatitudine(coordinate[0]);
                     hotel.setLongitudine(coordinate[1]);
                     hotelRepository.save(hotel);
+
                 } catch (Exception e) {
-                    System.err.println("!!! Errore geocoding per hotel ID " + hotel.getId() + ": " + e.getMessage());
+                    System.err.println("❌ Errore per Hotel ID " + hotel.getId() + ": " + e.getMessage());
                 }
+            } else {
+                System.out.println("✅ Hotel ID " + hotel.getId() + " ha già coordinate");
             }
         }
     }
