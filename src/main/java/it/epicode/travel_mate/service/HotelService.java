@@ -74,6 +74,27 @@ public class HotelService {
         return hotelRepository.save(hotel);
 
     }
+
+    public void aggiornaCoordinateMancanti() {
+        List<Hotel> hotels = hotelRepository.findAll();
+
+        for (Hotel hotel : hotels) {
+            if (hotel.getLatitudine() == null || hotel.getLongitudine() == null) {
+                try {
+                    String indirizzoCompleto = costruisciIndirizzoPulito(hotel);
+                    System.out.println(">>> Geocoding: " + indirizzoCompleto);
+                    double[] coords = geocodingService.getCoordinatesFromAddress(indirizzoCompleto);
+                    hotel.setLatitudine(coords[0]);
+                    hotel.setLongitudine(coords[1]);
+                    hotelRepository.save(hotel);
+                    System.out.println(">>> OK: " + hotel.getNome());
+                } catch (Exception e) {
+                    System.err.println(">>> ERRORE: " + hotel.getNome() + " → " + e.getMessage());
+                }
+            }
+        }
+    }
+
     private String normalizzaIndirizzo(String indirizzo) {
         return indirizzo
                 .replaceAll("\\bDi\\b", "di")

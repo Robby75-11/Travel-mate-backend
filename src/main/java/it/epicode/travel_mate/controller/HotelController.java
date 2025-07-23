@@ -35,6 +35,8 @@ public class HotelController {
         return ResponseEntity.ok(hotelService.getHotelById(nuovoHotelEntity.getId()));
     }
 
+
+
     // --- Endpoint per OTTENERE TUTTI gli Hotel (GET) ---
     // Restituisce una lista di HotelResponseDto
     @GetMapping
@@ -53,6 +55,13 @@ public class HotelController {
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/admin/geocoding/forza")
+    @PreAuthorize("hasRole('AMMINISTRATORE')")
+    public ResponseEntity<String> forzaGeocoding() {
+        hotelService.aggiornaCoordinateMancanti();
+        return ResponseEntity.ok("Geocoding completato.");
     }
 
     // --- Endpoint per AGGIORNARE un Hotel (PUT) ---
