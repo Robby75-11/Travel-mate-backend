@@ -81,15 +81,14 @@ public class HotelService {
         for (Hotel hotel : hotels) {
             if (hotel.getLatitudine() == null || hotel.getLongitudine() == null) {
                 try {
-                    String indirizzoCompleto = costruisciIndirizzoPulito(hotel);
-                    System.out.println(">>> Geocoding: " + indirizzoCompleto);
-                    double[] coords = geocodingService.getCoordinatesFromAddress(indirizzoCompleto);
-                    hotel.setLatitudine(coords[0]);
-                    hotel.setLongitudine(coords[1]);
+                    String indirizzoCompleto = hotel.getIndirizzo() + ", " + hotel.getCitta() + ", Italia";
+                    System.out.println(">>> Provo geocoding per: " + indirizzoCompleto);
+                    double[] coordinate = geocodingService.getCoordinatesFromAddress(indirizzoCompleto);
+                    hotel.setLatitudine(coordinate[0]);
+                    hotel.setLongitudine(coordinate[1]);
                     hotelRepository.save(hotel);
-                    System.out.println(">>> OK: " + hotel.getNome());
                 } catch (Exception e) {
-                    System.err.println(">>> ERRORE: " + hotel.getNome() + " → " + e.getMessage());
+                    System.err.println("!!! Errore geocoding per hotel ID " + hotel.getId() + ": " + e.getMessage());
                 }
             }
         }
