@@ -55,9 +55,6 @@ public class HotelService {
                         (hotel.getIndirizzo().contains(hotel.getCitta()) ? hotel.getIndirizzo() : hotel.getIndirizzo() + ", " + hotel.getCitta() + ", Italia")
                 );
 
-
-                System.out.println(">>> Geocodifica indirizzo: " + indirizzoFormattato);
-
                 double[] coords = geocodingService.getCoordinatesFromAddress(indirizzoFormattato);
 
                 hotel.setLatitudine(coords[0]);
@@ -106,12 +103,14 @@ public class HotelService {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Hotel con id=" + id + " non trovato"));
 
+        // Controllo se indirizzo o città sono stati modificati
         boolean indirizzoCambiato = hotelDetails.getIndirizzo() != null &&
                 !hotelDetails.getIndirizzo().equalsIgnoreCase(hotel.getIndirizzo());
 
         boolean cittaCambiata = hotelDetails.getCitta() != null &&
                 !hotelDetails.getCitta().equalsIgnoreCase(hotel.getCitta());
 
+        // Controllo se mancano latitudine e longitudine
         boolean mancanoCoordinate = hotel.getLatitudine() == null || hotel.getLongitudine() == null;
 
         // Aggiorna i dati
@@ -139,7 +138,7 @@ public class HotelService {
 
         return convertToDto(hotelRepository.save(hotel));
     }
-
+    // Metodo per costruire un indirizzo "pulito" da inviare a Google
     private String costruisciIndirizzoPulito(Hotel hotel) {
         return Stream.of(hotel.getIndirizzo(), hotel.getCitta(), "Italia")
                 .filter(s -> s != null && !s.trim().isEmpty())

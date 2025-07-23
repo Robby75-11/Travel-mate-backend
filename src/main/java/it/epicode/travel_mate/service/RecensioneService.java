@@ -115,7 +115,6 @@ public class RecensioneService {
             recensione.setContenuto("");  // oppure lancia errore
         }
 
-
         return recensioneRepository.save(recensione);
     }
 

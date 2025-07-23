@@ -24,7 +24,7 @@ public class ViaggioService {
     private ViaggioRepository viaggioRepository;
 
     @Autowired
-    private Cloudinary cloudinary; // Assicurati che Cloudinary sia configurato come Bean
+    private Cloudinary cloudinary; // Assicuro che Cloudinary sia configurato come Bean
 
     // Metodo helper per convertire Viaggio (Entity) in ViaggioResponseDto
     private ViaggioResponseDto convertToDto(Viaggio viaggio) {
