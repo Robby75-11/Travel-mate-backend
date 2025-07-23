@@ -52,17 +52,20 @@ public class HotelService {
 
             if (indirizzoPresente && cittaPresente && coordinateAssenti) {
                 String indirizzoFormattato = normalizzaIndirizzo(
-                        (hotel.getIndirizzo().contains(hotel.getCitta()) ? hotel.getIndirizzo() : hotel.getIndirizzo() + ", " + hotel.getCitta() + ", Italia")
+                        (hotel.getIndirizzo().contains(hotel.getCitta())
+                                ? hotel.getIndirizzo()
+                                : hotel.getIndirizzo() + ", " + hotel.getCitta() + ", Italia")
                 );
 
-
                 System.out.println(">>> Geocodifica indirizzo: " + indirizzoFormattato);
-
-                double[] coords = geocodingService.getCoordinatesFromAddress(indirizzoFormattato);
-
-                hotel.setLatitudine(coords[0]);
-                hotel.setLongitudine(coords[1]);
-                System.out.println(">>> Coordinate ottenute: lat=" + coords[0] + ", lon=" + coords[1]);
+                try {
+                    // ✅ CORRETTO: usiamo indirizzoFormattato, non hotel.getIndirizzo()
+                    double[] coords = geocodingService.getCoordinatesFromAddress(indirizzoFormattato);
+                    hotel.setLatitudine(coords[0]);
+                    hotel.setLongitudine(coords[1]);
+                } catch (Exception e) {
+                    System.err.println("⚠️ Errore durante il geocoding in saveHotel(): " + e.getMessage());
+                }
             } else {
                 System.out.println(">>> Geocoding saltato per hotel: " + hotel.getNome());
             }
@@ -72,8 +75,8 @@ public class HotelService {
         }
 
         return hotelRepository.save(hotel);
-
     }
+
 
     public void aggiornaCoordinateMancanti() {
         List<Hotel> hotels = hotelRepository.findAll();
@@ -101,6 +104,7 @@ public class HotelService {
 
     private String normalizzaIndirizzo(String indirizzo) {
         return indirizzo
+                .replaceAll(",", "")
                 .replaceAll("\\bDi\\b", "di")
                 .replaceAll("\\bDella\\b", "della")
                 .replaceAll("\\s+", " ") // rimuove spazi multipli
