@@ -41,4 +41,8 @@ public class AuthController {
         }
         return authService.login(loginDto);
     }
+    @GetMapping("/auth/test")
+    public String test() {
+        return "ok";
+    }
 }
