@@ -44,17 +44,6 @@ public class AuthController {
         }
         return authService.login(loginDto);
     }
-    @GetMapping("/auth/me")
-    public UtenteResponseDto getCurrentUser(@AuthenticationPrincipal Utente utenteLoggato) {
-        return new UtenteResponseDto(
-                utenteLoggato.getId(),
-                utenteLoggato.getNome(),
-                utenteLoggato.getCognome(),
-                utenteLoggato.getEmail(),
-                utenteLoggato.getIndirizzo(),
-                utenteLoggato.getTelefono(),
-                utenteLoggato.getRuolo()
-        );
-    }
+
 
 }

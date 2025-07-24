@@ -27,6 +27,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Utente utente = utenteRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Utente con email " + email + " non trovato."));
 
-        return utente; // ✅ Restituisci direttamente Utente, che implementa UserDetails
+        return utente; // Restituisce direttamente Utente, che implementa UserDetails
     }
 }
