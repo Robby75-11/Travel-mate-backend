@@ -1,8 +1,8 @@
 package it.epicode.travel_mate.controller;
 
-
 import it.epicode.travel_mate.dto.LoginDto;
 import it.epicode.travel_mate.dto.UtenteDto;
+import it.epicode.travel_mate.dto.UtenteResponseDto;
 import it.epicode.travel_mate.exception.NotFoundException;
 import it.epicode.travel_mate.exception.ValidationException;
 import it.epicode.travel_mate.model.Utente;
@@ -14,7 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.attribute.UserPrincipal;
+
 
 @RestController
 public class AuthController {
@@ -45,7 +45,16 @@ public class AuthController {
         return authService.login(loginDto);
     }
     @GetMapping("/auth/me")
-    public Utente getCurrentUser(@AuthenticationPrincipal Utente utenteLoggato) {
-        return utenteLoggato;
+    public UtenteResponseDto getCurrentUser(@AuthenticationPrincipal Utente utenteLoggato) {
+        return new UtenteResponseDto(
+                utenteLoggato.getId(),
+                utenteLoggato.getNome(),
+                utenteLoggato.getCognome(),
+                utenteLoggato.getEmail(),
+                utenteLoggato.getIndirizzo(),
+                utenteLoggato.getTelefono(),
+                utenteLoggato.getRuolo()
+        );
     }
+
 }
