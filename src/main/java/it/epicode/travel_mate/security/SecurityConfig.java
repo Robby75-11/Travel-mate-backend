@@ -116,6 +116,8 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+
+
     // NUOVO BEAN: Configurazione esplicita per il MultipartResolver
     @Bean
     public MultipartResolver multipartResolver() {
