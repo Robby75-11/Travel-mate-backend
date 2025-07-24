@@ -25,9 +25,6 @@ public class JwtTool {
     @Value("${jwt.secret}")
     private String chiaveSegreta;
 
-//    @Autowired
-//    private UtenteService utenteService; // Lascia commentato se non lo usi
-
     public String createToken(Utente utente){
         List<String> roles = List.of("ROLE_" + utente.getRuolo().toString());
         Map<String, Object> claims = new HashMap<>();

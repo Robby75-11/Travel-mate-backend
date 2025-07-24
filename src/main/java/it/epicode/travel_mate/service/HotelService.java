@@ -41,29 +41,39 @@ public class HotelService {
 
     // saveHotel accetta l'entità Hotel direttamente per la creazione/persistenza
     public Hotel saveHotel(Hotel hotel) {
+        // Controlla se esiste già un hotel con lo stesso nome
         if (existsByNome(hotel.getNome())) {
             throw new IllegalArgumentException("Esiste già un hotel con il nome: " + hotel.getNome());
         }
 
         try {
+            // Verifica se indirizzo e città sono presenti
             boolean indirizzoPresente = hotel.getIndirizzo() != null && !hotel.getIndirizzo().isBlank();
             boolean cittaPresente = hotel.getCitta() != null && !hotel.getCitta().isBlank();
+            // Verifica se le coordinate mancano
             boolean coordinateAssenti = hotel.getLatitudine() == null || hotel.getLongitudine() == null;
 
+            // Se abbiamo indirizzo + città ma mancano le coordinate → geocoding
             if (indirizzoPresente && cittaPresente && coordinateAssenti) {
+                // Normalizza l'indirizzo unendo indirizzo e città (se non già contenuta)
                 String indirizzoFormattato = normalizzaIndirizzo(
                         (hotel.getIndirizzo().contains(hotel.getCitta()) ? hotel.getIndirizzo() : hotel.getIndirizzo() + ", " + hotel.getCitta() + ", Italia")
                 );
 
+                // Ottiene coordinate (latitudine, longitudine) da Google Maps API
                 double[] coords = geocodingService.getCoordinatesFromAddress(indirizzoFormattato);
 
+                // Salva le coordinate nell'hotel
                 hotel.setLatitudine(coords[0]);
                 hotel.setLongitudine(coords[1]);
                 System.out.println(">>> Coordinate ottenute: lat=" + coords[0] + ", lon=" + coords[1]);
             } else {
+                // Se non soddisfa i criteri, salta il geocoding
                 System.out.println(">>> Geocoding saltato per hotel: " + hotel.getNome());
             }
         } catch (Exception e) {
+
+            // In caso di errore durante la geocodifica, stampa messaggio ed eccezione
             System.err.println(">>> Errore durante la geocodifica di: " + hotel.getNome());
             e.printStackTrace();
         }
@@ -71,12 +81,14 @@ public class HotelService {
         return hotelRepository.save(hotel);
 
     }
+    // Metodo di supporto per normalizzare la stringa dell'indirizzo
     private String normalizzaIndirizzo(String indirizzo) {
         return indirizzo
-                .replaceAll("\\bDi\\b", "di")
-                .replaceAll("\\bDella\\b", "della")
+                .replaceAll("\\bDi\\b", "di")// sostituisce "Di" con "di"
+                .replaceAll("\\bDella\\b", "della")// sostituisce "Della" con "della"
                 .replaceAll("\\s+", " ") // rimuove spazi multipli
-                .trim();
+                .trim();                                // rimuove spazi iniziali e finali
+
     }
     public boolean existsByNome(String nome) {
         return hotelRepository.existsByNome(nome);
@@ -140,9 +152,9 @@ public class HotelService {
     }
     // Metodo per costruire un indirizzo "pulito" da inviare a Google
     private String costruisciIndirizzoPulito(Hotel hotel) {
-        return Stream.of(hotel.getIndirizzo(), hotel.getCitta(), "Italia")
-                .filter(s -> s != null && !s.trim().isEmpty())
-                .collect(Collectors.joining(", "));
+        return Stream.of(hotel.getIndirizzo(), hotel.getCitta(), "Italia")// Crea uno stream con indirizzo, città e "Italia"
+                .filter(s -> s != null && !s.trim().isEmpty())// Rimuove eventuali elementi nulli o vuoti
+                .collect(Collectors.joining(", "));// Unisce i valori validi separandoli con virgole (es. "Via Roma, Milano, Italia")
     }
 
     public void deleteHotel(Long id) {
