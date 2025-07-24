@@ -90,8 +90,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
+
               "http://localhost:5173",
-               "https://travel-mate-sand.vercel.app"
+                "https://travel-mate-sand.vercel.app"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
@@ -117,7 +118,6 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
-
 
     // NUOVO BEAN: Configurazione esplicita per il MultipartResolver
     @Bean
