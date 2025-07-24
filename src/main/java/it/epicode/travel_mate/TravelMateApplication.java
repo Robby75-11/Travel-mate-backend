@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-@SpringBootApplication(scanBasePackages = "it.epicode.travel_mate")
+@SpringBootApplication
 @EnableAsync
 public class
 TravelMateApplication {
