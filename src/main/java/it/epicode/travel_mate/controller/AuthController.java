@@ -9,9 +9,12 @@ import it.epicode.travel_mate.model.Utente;
 import it.epicode.travel_mate.service.AuthService;
 import it.epicode.travel_mate.service.UtenteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.file.attribute.UserPrincipal;
 
 @RestController
 public class AuthController {
@@ -41,5 +44,8 @@ public class AuthController {
         }
         return authService.login(loginDto);
     }
-
+    @GetMapping("/auth/me")
+    public Utente getCurrentUser(@AuthenticationPrincipal Utente utenteLoggato) {
+        return utenteLoggato;
+    }
 }
