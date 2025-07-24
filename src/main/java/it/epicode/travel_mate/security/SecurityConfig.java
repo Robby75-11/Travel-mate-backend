@@ -89,11 +89,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-      //  config.setAllowedOrigins(List.of(
-          //      "http://localhost:5173",
-             //   "https://travel-mate-sand.vercel.app"
-       // ));
-        config.addAllowedOriginPattern("*");
+        config.setAllowedOriginPatterns(List.of(
+              "http://localhost:5173",
+               "https://travel-mate-sand.vercel.app"
+        ));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
