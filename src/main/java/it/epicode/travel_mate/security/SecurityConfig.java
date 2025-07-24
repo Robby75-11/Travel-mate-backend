@@ -46,6 +46,7 @@ public class SecurityConfig {
         httpSecurity.cors(Customizer.withDefaults());
 
         httpSecurity.authorizeHttpRequests(http->http
+                .requestMatchers("/ping").permitAll()
                 .requestMatchers("/auth/**").permitAll() // Login e registrazione aperti a tutti
                 // Endpoint pubblici per GET (voli, viaggi, hotel)
                 .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
