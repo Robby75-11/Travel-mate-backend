@@ -7,13 +7,17 @@ import it.epicode.travel_mate.exception.NotFoundException;
 import it.epicode.travel_mate.exception.ValidationException;
 import it.epicode.travel_mate.model.Utente;
 import it.epicode.travel_mate.service.AuthService;
+import it.epicode.travel_mate.service.PasswordResetService;
 import it.epicode.travel_mate.service.UtenteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 
 
 @RestController
@@ -24,6 +28,12 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private PasswordResetService passwordResetService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/auth/register")
     public Utente register(@RequestBody @Validated UtenteDto utenteDto, BindingResult bindingResult) throws ValidationException {
@@ -44,6 +54,19 @@ public class AuthController {
         }
         return authService.login(loginDto);
     }
+@PostMapping("/auth/forgot-password")
+public ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> body) {
+    String email = body.get("email");
+    passwordResetService.createAndSendToken(email);
+    return ResponseEntity.ok("Se l’email esiste, riceverai un link");
+}
 
 
+    @PostMapping("/auth/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> body) {
+        String token = body.get("token");
+        String newPassword = body.get("newPassword");
+        passwordResetService.resetPassword(token, newPassword, passwordEncoder);
+        return ResponseEntity.ok("Password aggiornata con successo");
+    }
 }
