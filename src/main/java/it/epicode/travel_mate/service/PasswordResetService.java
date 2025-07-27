@@ -5,6 +5,7 @@ import it.epicode.travel_mate.model.Utente;
 import it.epicode.travel_mate.repository.PasswordResetTokenRepository;
 import it.epicode.travel_mate.repository.UtenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,10 @@ public class PasswordResetService {
     @Autowired
     private EmailService emailService;
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
+
     public void createAndSendToken(String email) {
         Optional<Utente> optionalUtente = utenteRepository.findByEmail(email);
         if (optionalUtente.isPresent()) {
@@ -48,7 +53,7 @@ public class PasswordResetService {
 
             tokenRepository.save(resetToken);
 
-            String resetLink = "http://localhost:5173/reset-password?token=" + token;
+            String resetLink =  frontendUrl + "/reset-password?token=" + token;
             String subject = "Reimposta la tua password - TravelMate";
             String text = "<p>Clicca sul seguente link per reimpostare la tua password:</p>" +
                     "<p><a href=\"" + resetLink + "\">Reimposta la tua password</a></p>" +
