@@ -56,11 +56,24 @@ public class RecensioneService {
             dto.setDestinazioneNome(r.getHotel().getNome());
         } else if (r.getViaggio() != null) {
             dto.setTipo("viaggio");
-            dto.setDestinazioneNome(r.getViaggio().getTitolo());
+            Viaggio viaggio = r.getViaggio();
+
+            // Usa prima il titolo, se nullo o vuoto usa la destinazione, altrimenti N/D
+            String titolo = viaggio.getTitolo();
+            String destinazione = viaggio.getDestinazione();
+
+            if (titolo != null && !titolo.isBlank()) {
+                dto.setDestinazioneNome(titolo);
+            } else if (destinazione != null && !destinazione.isBlank()) {
+                dto.setDestinazioneNome(destinazione);
+            } else {
+                dto.setDestinazioneNome("N/D");
+            }
         } else {
             dto.setTipo("N/D");
             dto.setDestinazioneNome("N/D");
         }
+
         return dto;
     }
 
