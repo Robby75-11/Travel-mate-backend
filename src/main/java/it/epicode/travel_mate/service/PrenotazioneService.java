@@ -16,6 +16,7 @@ import it.epicode.travel_mate.repository.UtenteRepository;
 import it.epicode.travel_mate.repository.ViaggioRepository;
 import it.epicode.travel_mate.repository.VoloRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,10 @@ import java.time.LocalDateTime; // Assicurati di importarlo
 
 @Service
 public class PrenotazioneService {
-
+    @Value("${gmail.mail.from}")
+    private String mittente;
+    @Autowired
+    private EmailService emailService;
     @Autowired private PrenotazioneRepository prenotazioneRepository;
     @Autowired private UtenteRepository utenteRepository;
     @Autowired private ViaggioRepository viaggioRepository;
@@ -132,6 +136,7 @@ public class PrenotazioneService {
         Prenotazione existing = prenotazioneRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Prenotazione non trovata con id: " + id));
 
+        StatoPrenotazione statoPrecedente = existing.getStatoPrenotazione();
 
         existing.setStatoPrenotazione(prenotazioneDto.getStatoPrenotazione());
         existing.setDataPrenotazione(prenotazioneDto.getDataPrenotazione());
@@ -164,8 +169,20 @@ public class PrenotazioneService {
             existing.setVolo(null);
         }
 
-
         Prenotazione updatedPrenotazione = prenotazioneRepository.save(existing);
+
+        // ✉️ Invio automatico dell'email se appena confermata
+        if (!StatoPrenotazione.CONFERMATA.equals(statoPrecedente)
+                && StatoPrenotazione.CONFERMATA.equals(prenotazioneDto.getStatoPrenotazione())) {
+
+            String destinatario = existing.getUtente().getEmail();
+            String oggetto = "La tua prenotazione è stata confermata!";
+            String corpo = "<h2>Ciao " + existing.getUtente().getNome() + ",</h2>"
+                    + "<p>La tua prenotazione per <strong>" + existing.getDestinazione() + "</strong> è stata <strong>confermata</strong>.</p>"
+                    + "<p>Grazie per aver scelto Travel Mate!</p>";
+
+            emailService.sendMail(mittente, destinatario, oggetto, corpo);
+        }
         return convertToResponseDto(updatedPrenotazione);
     }
 
