@@ -9,7 +9,6 @@ import it.epicode.travel_mate.repository.PasswordResetTokenRepository;
 import it.epicode.travel_mate.repository.UtenteRepository;
 import it.epicode.travel_mate.security.JwtTool;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

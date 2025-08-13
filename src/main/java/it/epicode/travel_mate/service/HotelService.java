@@ -108,7 +108,7 @@ public class HotelService {
 
     // Metodo di supporto per normalizzare la stringa dell'indirizzo
 
-    private String normalizzaIndirizzo(String indirizzo) {
+     private String normalizzaIndirizzo(String indirizzo) {
         return indirizzo
                 .replaceAll("\\bDi\\b", "di")// sostituisce "Di" con "di"
                 .replaceAll("\\bDella\\b", "della")// sostituisce "Della" con "della"
