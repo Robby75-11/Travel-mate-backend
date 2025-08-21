@@ -37,13 +37,29 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/auth/register")
-    public Utente register(@RequestBody @Validated UtenteDto utenteDto, BindingResult bindingResult) throws ValidationException {
+    public ResponseEntity<UtenteResponseDto> register(
+            @RequestBody @Validated UtenteDto utenteDto,
+            BindingResult bindingResult) throws ValidationException {
+
         if(bindingResult.hasErrors()){
             throw new ValidationException(bindingResult.getAllErrors().stream()
                     .map(objectError -> objectError.getDefaultMessage())
                     .reduce("", (s,e) -> s + e));
         }
-        return utenteService.saveUtente(utenteDto);  // o un metodo di salvataggio che accetta UserDto
+
+        Utente nuovoUtente = utenteService.saveUtente(utenteDto);
+
+        UtenteResponseDto response = new UtenteResponseDto(
+                nuovoUtente.getId(),
+                nuovoUtente.getNome(),
+                nuovoUtente.getCognome(),
+                nuovoUtente.getEmail(),
+                nuovoUtente.getIndirizzo(),
+                nuovoUtente.getTelefono(),
+                nuovoUtente.getRuolo()
+        );
+
+        return ResponseEntity.ok(response); // o un metodo di salvataggio che accetta UserDto
     }
 
     @PostMapping("/auth/login")
