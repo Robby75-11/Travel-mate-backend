@@ -4,13 +4,15 @@ FROM eclipse-temurin:21-jdk
 # Imposta la working directory
 WORKDIR /app
 
-# Copia il wrapper Maven e dai permessi
+# Copia solo i file necessari per la cache
+COPY pom.xml .
 COPY mvnw .
 COPY .mvn .mvn
+
+# ✅ Dai i permessi di esecuzione al wrapper Maven
 RUN chmod +x mvnw
 
-# Copia il pom.xml e scarica le dipendenze (per cache)
-COPY pom.xml .
+# Scarica le dipendenze (usa il wrapper maven)
 RUN ./mvnw dependency:go-offline -B
 
 # Copia tutto il progetto
