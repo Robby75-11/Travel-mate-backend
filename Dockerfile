@@ -1,28 +1,26 @@
-# Usa un'immagine con Java 21
-FROM eclipse-temurin:21-jdk
+# Usa un'immagine con Maven + Java 21 già installati
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 
-# Imposta la working directory
 WORKDIR /app
 
-# Copia solo i file necessari per la cache
+# Copia pom.xml e scarica dipendenze
 COPY pom.xml .
-COPY mvnw .
-COPY .mvn .mvn
+RUN mvn dependency:go-offline -B
 
-# ✅ Dai i permessi di esecuzione al wrapper Maven
-RUN chmod +x mvnw
-
-# Scarica le dipendenze (usa il wrapper maven)
-RUN ./mvnw dependency:go-offline -B
-
-# Copia tutto il progetto
+# Copia tutto il progetto e compila
 COPY . .
+RUN mvn clean package -DskipTests
 
-# Compila il progetto
-RUN ./mvnw clean package -DskipTests
+# ------------------------
+# Secondo stage: immagine leggera solo con Java
+FROM eclipse-temurin:21-jdk
 
-# Espone la porta (Render usa 8080 di default)
+WORKDIR /app
+
+# Copia il jar costruito nello stage precedente
+COPY --from=build /app/target/travel-mate-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
 
-# Comando di avvio
-CMD ["java", "-jar", "target/travel-mate-0.0.1-SNAPSHOT.jar"]
+# Avvia l'app
+CMD ["java", "-jar", "app.jar"]
