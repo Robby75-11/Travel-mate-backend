@@ -4,18 +4,19 @@ FROM eclipse-temurin:21-jdk
 # Imposta la working directory
 WORKDIR /app
 
-# Copia il pom.xml e lo script maven wrapper
-COPY pom.xml .
+# Copia il wrapper Maven e dai permessi
 COPY mvnw .
 COPY .mvn .mvn
+RUN chmod +x mvnw
 
-# Scarica le dipendenze (per caching)
+# Copia il pom.xml e scarica le dipendenze (per cache)
+COPY pom.xml .
 RUN ./mvnw dependency:go-offline -B
 
 # Copia tutto il progetto
 COPY . .
 
-# Compila il progetto (senza test)
+# Compila il progetto
 RUN ./mvnw clean package -DskipTests
 
 # Espone la porta (Render usa 8080 di default)
