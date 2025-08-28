@@ -20,7 +20,5 @@ WORKDIR /app
 # Copia il jar costruito nello stage precedente
 COPY --from=build /app/target/travel-mate-0.0.1-SNAPSHOT.jar app.jar
 
-EXPOSE 8080
-
 # Avvia l'app
 CMD ["java", "-jar", "app.jar"]
