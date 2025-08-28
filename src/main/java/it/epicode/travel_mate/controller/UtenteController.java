@@ -1,6 +1,5 @@
 package it.epicode.travel_mate.controller;
 
-import it.epicode.travel_mate.dto.UtenteDto;
 import it.epicode.travel_mate.dto.UtenteResponseDto;
 import it.epicode.travel_mate.enumeration.Ruolo;
 import it.epicode.travel_mate.exception.NotFoundException;
