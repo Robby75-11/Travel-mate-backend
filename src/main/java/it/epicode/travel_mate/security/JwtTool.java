@@ -1,13 +1,9 @@
 package it.epicode.travel_mate.security;
 
-import it.epicode.travel_mate.exception.NotFoundException;
 import it.epicode.travel_mate.model.Utente;
-import it.epicode.travel_mate.service.UtenteService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.User; // Non usato direttamente in createToken qui
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
