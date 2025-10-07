@@ -1,0 +1,13 @@
+version: 1.0
+runtime: java21 # 👈 MODIFICA SE USI JAVA 21 (es. java21)
+build:
+  commands:
+    # 1. Compila il progetto Maven, creando il file JAR nella cartella 'target/'
+    build: 'mvn clean package -DskipTests'
+run:
+  runtime-config:
+    memory: 1gb # Lasciamo un po' più di memoria per Java
+    cpu: 1024
+  # 2. Avvia il file JAR con il nome esatto che abbiamo trovato
+  command: 'java -jar target/travel-mate-0.0.1-SNAPSHOT.jar'
+  port: 8080 # 👈 MODIFICA SOLO SE IL TUO SPRING BOOT USA UNA PORTA DIVERSA
