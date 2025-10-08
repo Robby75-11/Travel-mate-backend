@@ -52,7 +52,6 @@ public class SecurityConfig {
         httpSecurity.cors(Customizer.withDefaults());
 
         httpSecurity.authorizeHttpRequests(http->http
-                .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
                 .requestMatchers("/auth/**").permitAll() // Login e registrazione aperti a tutti
