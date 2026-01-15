@@ -40,6 +40,10 @@ public class Utente implements UserDetails {
     @JsonIgnore
     private List<Recensione> recensioni;
 
+    @OneToOne(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private PasswordResetToken passwordResetToken;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + ruolo.name()));

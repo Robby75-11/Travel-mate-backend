@@ -16,7 +16,7 @@ public interface RecensioneRepository extends JpaRepository<Recensione, Long> {
     //Per Hotel
     List<Recensione> findByHotelId(Long hotelId);
 
-    Optional<Recensione> findByHotelIdAndUtenteId(Long viaggioId, Long utenteId);
+    Optional<Recensione> findByHotelIdAndUtenteId(Long hotelId, Long utenteId);
 
 
 }
