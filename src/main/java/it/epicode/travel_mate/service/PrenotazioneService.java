@@ -207,7 +207,6 @@ public class PrenotazioneService {
             utenteDto.setNome(prenotazione.getUtente().getNome());
             utenteDto.setCognome(prenotazione.getUtente().getCognome());
             utenteDto.setEmail(prenotazione.getUtente().getEmail());
-            utenteDto.setIndirizzo(prenotazione.getUtente().getIndirizzo());
             utenteDto.setTelefono(prenotazione.getUtente().getTelefono());
             utenteDto.setRuolo(prenotazione.getUtente().getRuolo());
             dto.setUtente(utenteDto);

@@ -54,7 +54,6 @@ public class AuthController {
                 nuovoUtente.getNome(),
                 nuovoUtente.getCognome(),
                 nuovoUtente.getEmail(),
-                nuovoUtente.getIndirizzo(),
                 nuovoUtente.getTelefono(),
                 nuovoUtente.getRuolo()
         );
@@ -85,7 +84,6 @@ public class AuthController {
                 utente.getNome(),
                 utente.getCognome(),
                 utente.getEmail(),
-                utente.getIndirizzo(),
                 utente.getTelefono(),
                 utente.getRuolo()
         );

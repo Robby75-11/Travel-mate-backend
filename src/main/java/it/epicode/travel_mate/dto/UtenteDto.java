@@ -14,11 +14,13 @@ public class UtenteDto {
 
     private String email;
 
+    private String telefono;
+
     private String password;
 
-    private String indirizzo;
 
-    private String telefono;
+
+
 
     private Ruolo ruolo;
 }

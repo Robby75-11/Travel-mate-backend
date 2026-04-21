@@ -14,7 +14,8 @@ public class UtenteResponseDto {
     private String nome;
     private String cognome;
     private String email;
-    private String indirizzo;
     private String telefono;
+
+
     private Ruolo ruolo; // Solo se vuoi che il ruolo sia visibile nella risposta
 }

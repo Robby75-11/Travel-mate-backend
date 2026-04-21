@@ -83,7 +83,6 @@ public class UtenteController {
         dto.setNome(aggiornato.getNome());
         dto.setCognome(aggiornato.getCognome());
         dto.setEmail(aggiornato.getEmail());
-        dto.setIndirizzo(aggiornato.getIndirizzo());
         dto.setTelefono(aggiornato.getTelefono());
         dto.setRuolo(aggiornato.getRuolo());
 
